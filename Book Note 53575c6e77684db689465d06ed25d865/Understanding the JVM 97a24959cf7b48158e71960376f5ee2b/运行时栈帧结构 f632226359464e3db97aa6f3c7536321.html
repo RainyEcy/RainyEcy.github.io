@@ -1,0 +1,694 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>运行时栈帧结构</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-opaquegray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="f6322263-5946-4e3d-b97a-a6f3c7536321" class="page sans"><header><h1 class="page-title">运行时栈帧结构</h1></header><div class="page-body"><hr id="4030f69c-8c09-41aa-84c6-d83fd4065bf9"/><nav id="2b9c5e78-9da1-4c13-b3d0-0946851acce3" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#a53809d6-0817-489f-9707-bcd6884837e0">局部变量表</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#f77d11de-c663-4f0c-9e6b-a0dd702daac5">操作数栈</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#6782df78-ca55-4da8-9c88-21f6ffaee783">动态连接</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#ae820ae6-bf3c-495c-b78d-0cd4171f1564">方法返回地址</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#ce4d8a9c-5f82-44e8-9b29-ccf682e61b0d">附加信息</a></div></nav><blockquote id="7f802012-96bf-4371-90b3-ff6a4249d764" class="block-color-gray_background"><strong>Java虚拟机以方法作为最基本的执行单元，“栈帧”（Stack Frame）则是用于支持虚拟机进行方法调用和方法执行背后的数据结构，它也是虚拟机运行时数据区中的虚拟机栈（</strong><strong><code>Virtual Machine  Stack</code></strong><strong>）的栈元素。</strong><p id="6eeaab7b-723a-4e6a-9463-26fb2a0cdb04" class=""><strong>一个线程的方法调用链可能会很长，以Java程序的角度来看，同一时刻，同一条线程里面，在调用堆栈的所有方法都同时处于执行状态。而对于执行引擎来讲，在活动线程中，只有位于栈顶的方法才是在运行的，只有位于栈顶的栈帧才是生效的，其被称为“当前栈帧”（</strong><code><strong>Current Stack Frame</strong></code><strong>），与这个栈帧关联的方法叫做“当前方法”（</strong><code><strong>Current Method</strong></code><strong>）。</strong></p><p id="046b0e29-81a1-4c4c-a06a-401c4d48087e" class=""><strong>执行引擎所运行的字节码指令都只针对当前栈帧进行操作。</strong></p><p id="56656278-af94-40ae-8bcc-9874dc9fcb7a" class=""><strong>具体内存分配参考：</strong></p><figure id="0d127796-4659-4489-a196-75375fc61b9c" class="link-to-page"><a href="Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%200d12779646594489a19675375fc61b9c.html">Java内存区域</a></figure></blockquote><h1 id="a53809d6-0817-489f-9707-bcd6884837e0" class="">局部变量表</h1><blockquote id="067d805b-2cf4-4dc1-aa3c-020a3a6515e9" class="block-color-gray_background"><strong>局部变量表（</strong><strong><code>Local Variables Table</code></strong><strong>）是一组变量值的存储空间，用于存放方法参数和方法内部定义的局部变量。在Java程序被编译为</strong><strong><code>Class</code></strong><strong>文件时，就在方法的</strong><strong><code>Code</code></strong><strong>属性的</strong><strong><code>max_locals</code></strong><strong>数据项中确定了该方法所需要分配的局部变量表的最大容量。</strong><h2 id="77f7b3dd-ea59-4fba-8087-a6b8fdc47568" class="">特征：</h2><ul id="550a90b9-0f3e-43ab-a972-fc66a3daa2f0" class="bulleted-list"><li style="list-style-type:disc">局部变量表的容量以变量槽（<code>Variable Slot</code>）为最小单位，《Java虚拟机规范》中并没有明确指出一个变量槽应占用的内存空间大小，只是很有引导性地说到每个变量槽都应该能存放一个<code>boolean</code>、<code>byte</code>、<code>char</code>、<code>short</code>、<code>int</code>、<code>float</code>、<code>reference</code>或<code>returnAddress</code>类型的数据。</li></ul><ul id="453eb66d-ec1a-42de-8651-02e7355615c4" class="bulleted-list"><li style="list-style-type:disc"><code>reference</code>类型表示对一个对象实例的引用，至少能通过这个引用做到两件事情。<ul id="f1302eca-2927-4397-9a1c-1e1a5fa96b12" class="bulleted-list"><li style="list-style-type:circle">一是从根据引用直接或间接地查找到对象在Java堆中的数据存放的起始地址或索引。</li></ul><ul id="94bdbb5f-fd34-460f-a945-ce87fae238ff" class="bulleted-list"><li style="list-style-type:circle">二是根据引用直接或间接地查找到对象所属数据类型在方法区中存储的类型信息。</li></ul></li></ul><ul id="f05044c8-6fb9-4d28-b16b-bbd459d55752" class="bulleted-list"><li style="list-style-type:disc"><code>returnAddress</code>类型目前很少见，它是为字节码指令<code>jsr</code>、<code>jsr_w</code>和<code>ret</code>服务的，指向一条字节码指令的地址，某些很古老的Java虚拟机使用这几条指令来实现异常处理时的跳转，现在完全改为采用异常表来代替了。</li></ul><ul id="d447092f-4eda-44b1-8bdf-fc308f2718f6" class="bulleted-list"><li style="list-style-type:disc">Java虚拟机通过索引定位的方式使用局部变量表，索引值的范围从0开始至局部变量表最大的变量槽数量。如果访问的是32位数据类型的变量，索引<code>N</code>就代表使用第<code>N</code>个变量槽，如果访问的是64位数据类型的变量，则会同时使用第<code>N</code>和<code>N+1</code>两个变量槽。</li></ul><ul id="71a61c34-d51c-4a63-8e15-a98b2f46fead" class="bulleted-list"><li style="list-style-type:disc">当一个方法被调用时，Java虚拟机会使用局部变量表来完成参数值到参数变量列表的传递过程，即实参到形参的传递。如果执行的是实例方法那局部变量表第0位索引的变量槽默认是用于传递方法所属对象实例的引用，在方法中可以通过<code>this</code>来访问到这个隐含的参数。其余参数则按照参数表顺序排列，再根据方法体内部定义的变量顺序和作用域分配其余的变量槽。</li></ul><ul id="bcb1b7cb-216f-484e-bec7-8b98d2a60590" class="bulleted-list"><li style="list-style-type:disc">为了尽可能节省栈桢耗用的内存空间，局部变量表中的变量槽是可以重用的，方法体中定义的变量，其作用域并不一定会覆盖整个方法体，如果当前字节码PC计数器的值已经超出了某个变量的作用域，那这个变量对应的变量槽就可以交给其他变量来重用。不过某些情况下，变量槽的复用会直接影响垃圾收集行为。关于局部变量表，还有一点可能会对实际开发产生影响，就是局部变量不像类变量那样存在“准备阶段”，因此没有为类变量赋值没有关系，类变量仍具有一个确定的初始值。但局部变量不一样，如果一个局部变量定义了但没有赋初始值，那它是完全不能使用的。编译器在编译期间能检测到并提示这一点。</li></ul><h2 id="0ebcd38f-992d-4462-8709-1d62883707c2" class="">演示代码</h2><pre id="6ab5c84c-a07c-4ed1-89ef-ac6c60f12e1b" class="code"><code>		/**
+     * 局部变量表槽复用对垃圾回收的影响
+     */
+    public static void main(String[] args) {
+        byte[] bytes = new byte[64 * 1024 * 1024];
+        System.gc();
+        // 执行结果
+        // GC(0) Pause Full (System.gc()) 69M-&gt;66M(234M) 4.591ms
+    }
+		public static void main(String[] args) {
+        byte[] bytes = new byte[64 * 1024 * 1024];
+        bytes = null;
+        System.gc();
+        // 执行结果
+        // GC(0) Pause Full (System.gc()) 69M-&gt;0M(14M) 3.491ms
+    }
+		public static void main(String[] args) {
+        {
+            byte[] bytes = new byte[64 * 1024 * 1024];
+        }
+        int i = 0;
+        System.gc();
+        // 执行结果
+        // GC(0) Pause Full (System.gc()) 69M-&gt;0M(14M) 6.086ms
+    }</code></pre></blockquote><h1 id="f77d11de-c663-4f0c-9e6b-a0dd702daac5" class="">操作数栈</h1><blockquote id="dcb28726-669b-4c3e-b030-5206965c9da1" class="block-color-gray_background"><strong>操作数栈（</strong><strong><code>Operand Stack</code></strong><strong>）也常被称为操作栈，它是一个后入先出（</strong><strong><code>Last In First Out</code></strong><strong>
+， </strong><strong><code>LIFO</code></strong><strong>）栈。</strong><p id="e1102bbc-fe56-48f5-8930-d05d97c3a9d2" class="">同局部变量表一样，操作数栈的最大深度也在编译的时候被写入到<code>Code</code>属性的<code>max_stacks</code>数据项中。操作数栈的每一个元素都可以是包括<code>long</code>和<code>double</code>在内的任意<code>Java</code>数据类型。</p><p id="8087a857-c485-4b54-ae57-8b7d64bee94c" class="">32为数据类型所占的栈容量为1，64为数据类型所占栈容量为2。</p><p id="835deec6-c416-4fa4-ae9e-05bacab33dcc" class="">当一个方法刚刚开始执行的时候，这个方法的操作数栈是空的，在方法的执行过程中，会有各种字节码指令往</p><p id="aa8caeb3-8a42-4925-81bf-5b926b808841" class="">操作数栈中写入和提取内容，也就是出栈和入栈操作。</p><ul id="254c40b6-7cef-477a-be4d-e7d15563047f" class="bulleted-list"><li style="list-style-type:disc">做算术运算的时候是通过将运算涉及的操作数压入栈顶后调用运算指令进行的。</li></ul><ul id="8ebee109-f704-4d2e-8426-8916eb632ce9" class="bulleted-list"><li style="list-style-type:disc">在调用其他方法的时候是通过操作数栈来进行方法参数的传递。</li></ul><p id="ca16d544-eadb-416d-9770-e3db6c5bd2a8" class=""><strong><em>Java虚拟机的解释执行引擎被称为“基于栈的执行引擎”，里边的“栈”就是操作数栈。</em></strong></p><p id="692838f8-8eb8-40ab-b580-eeac2d2b7c8f" class="">在概念模型中，两个不同栈桢作为不同方法的虚拟机栈的元素，是完全互相独立的。但是在大多数虚拟机的实现里都会进行一些优化，令两个栈桢出现一部分重叠。让下面栈桢的部分操作数栈与上面栈桢的部分局部变量表重叠在一起，这样做不仅节约了一些空间，更重要的是在进行方法调用时就可以直接公用一部分数据，无需进行额外的参数复制传递了。</p><figure id="554fae8f-ee69-4778-9a63-8a9aac45c861" class="image"><a href="%E8%BF%90%E8%A1%8C%E6%97%B6%E6%A0%88%E5%B8%A7%E7%BB%93%E6%9E%84%20f632226359464e3db97aa6f3c7536321/1.png"><img style="width:1237px" src="%E8%BF%90%E8%A1%8C%E6%97%B6%E6%A0%88%E5%B8%A7%E7%BB%93%E6%9E%84%20f632226359464e3db97aa6f3c7536321/1.png"/></a></figure></blockquote><h1 id="6782df78-ca55-4da8-9c88-21f6ffaee783" class="">动态连接</h1><blockquote id="4c4e817c-7ab7-4903-b9cf-78e26a4bb5be" class="block-color-gray_background"><strong>每个栈帧都包含一个指向常量池中该栈帧所属方法的引用，持有这个引用是为了支持方法调用过程中的动态连接（</strong><strong><code>Dynamic Linking</code></strong><strong>）。</strong><p id="6d9db643-b94b-453e-ab85-0f838fce2cb6" class="">Class文件的常量池中存有大量的符号引用，字节码中的方法调用指令就以常量池里指向方法的符号引用作为参数。</p><ul id="c0516226-499d-4acc-93b1-9c14aa20c47d" class="bulleted-list"><li style="list-style-type:disc">这些符号引用一部分会在类加载阶段或者第一次使用的时候转化为直接引用，这种转化被称为静态解析。</li></ul><ul id="fabf71be-b33b-4ef0-9918-4043bff0e245" class="bulleted-list"><li style="list-style-type:disc">另外一部分将在每一次运行期间都转化为直接引用，这部分叫做动态解析。</li></ul></blockquote><h1 id="ae820ae6-bf3c-495c-b78d-0cd4171f1564" class="">方法返回地址</h1><blockquote id="9680d7fa-9468-41c7-b436-fe79189b8995" class="block-color-gray_background"><strong>当一个方法开始执行后，只有两种方式退出这个方法。</strong><ul id="02194787-6d15-4b08-a8cb-1827e250bba8" class="bulleted-list"><li style="list-style-type:disc">第一种方式是执行引擎遇到任意一个方法返回的字节码指令，这时候可能会有返回值给上层的方法调用者（调用当前方法的方法称为调用者或者主调方法），方法是否有返回值以及返回值的类型将根据遇到何种方法返回指令来决定，这种退出方法的方式称为“正常调用完成”（<code>Normal Method Invocation Completion</code>）</li></ul><ul id="4c408c6e-e8be-4e6f-83fb-3b59402edcd7" class="bulleted-list"><li style="list-style-type:disc">在方法执行过程中遇到了异常，并且这个异常没有在方法体内得到妥善处理。无论是Java虚拟机内部的异常，还是代码中抛出的异常，只要在本方法内的异常表中没有搜索到匹配的异常处理器，就会导致方法的退出，这种退出方式称为“异常调用完成”（<code>Abrupt Method Invocation Completion</code>）</li></ul><p id="2818ecee-14a3-4cc9-9e55-238acad80817" class="">无论采用何种退出方式，在方法退出后，都必须返回到最初方法被调用的位置，程序才能执行，方法返回时可能需要在栈帧中保存一些信息，用来帮助恢复它的上层主调方法的执行状态。</p><h3 id="1f6fd8de-386b-47d6-9740-21a5546cb1cb" class="">基于概念模型-方法的退出执行操作：</h3><ul id="fc807287-82e5-4163-9f3e-ecc036f6b567" class="bulleted-list"><li style="list-style-type:disc">恢复上层方法的局部变量表和操作数栈</li></ul><ul id="490663b7-7771-4e9d-b597-5286e03fed49" class="bulleted-list"><li style="list-style-type:disc">把返回值压入主调方法的操作数栈</li></ul><ul id="83ac01dc-0566-416a-8eac-612cb212c46b" class="bulleted-list"><li style="list-style-type:disc">调整PC计数器的值指向主调方法的下一条指令</li></ul></blockquote><h1 id="ce4d8a9c-5f82-44e8-9b29-ccf682e61b0d" class="">附加信息</h1><blockquote id="1ce7a6ce-b5ab-408f-b2fc-3a69efa0888b" class="block-color-gray_background"><strong>《Java虚拟机规范》允许虚拟机实现增加一些规范里没有描述的信息到栈桢之中，例如与调试、性能收集相关的信息，这部分信息完全取决于具体的虚拟机实现。</strong></blockquote></div></article></body></html>
