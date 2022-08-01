@@ -1,0 +1,692 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Javac编译器</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-opaquegray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="c04b76a4-aeff-4fd3-8b1f-92862e59186d" class="page sans"><header><h1 class="page-title">Javac编译器</h1></header><div class="page-body"><hr id="8378a937-706d-445c-b0d8-d33127de72a3"/><nav id="8d7107b3-2f8a-4302-94f9-236b247a5561" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#bc1bd6cb-fb8c-4d1f-9645-35fc08d13221">Javac编译总过程</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#dbad4fb7-8961-42bb-a522-1e99596fa638">解析与填充符号表 - <code>处理过程 1</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#3c5846ea-593f-4515-9789-67ecfd2d01db">词法分析、语法分析 - <code>处理过程 1.1 parseFiles</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#dc0a54df-4fcb-4170-bd05-c0f638f9599d">填充符号表 - <code>处理过程 1.2 </code><code><strong>enterTrees</strong></code></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#e74360c8-5e8f-4fde-b06f-5726eea4ac43">注解处理器 - <code>处理过程 2 processAnnotations</code></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#abfe3e25-588b-49c7-b367-909e4256a9be">语义分析与字节码生成 - <code>处理过程 3</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#b2ce879f-a143-4b57-9084-b5039219a8fa">标注检查 - <code>处理过程 3.1 attribute</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#4d1bce72-c4dd-49b4-8d67-108867004839">数据及控制流分析 - <code>处理过程 3.2 flow</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#14b59c20-e5ee-4a22-8046-95f498597119">解语法糖 - <code>处理过程 3.3 </code><code><strong>desugar</strong></code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#9de1905e-2308-4ce1-8b33-e14d1d457054">字节码生成 - <code>处理过程 3.4 generate</code></a></div></nav><h1 id="bc1bd6cb-fb8c-4d1f-9645-35fc08d13221" class="">Javac编译总过程</h1><blockquote id="75a46ca2-0f7e-45ca-9efc-147ede6e378a" class="block-color-gray_background"><em><strong>Javac源码分析</strong></em><h3 id="467dadb2-f4c5-444e-81b9-e016738a03dd" class=""><strong>Javac编译过程图</strong></h3><figure id="0ced43d4-effe-443b-8ecd-9b6546796279" class="image"><a href="Javac%E7%BC%96%E8%AF%91%E5%99%A8%20c04b76a4aeff4fd38b1f92862e59186d/%25E6%2588%25AA%25E5%25B1%258F2022-07-25_21.40.21.png"><img style="width:2332px" src="Javac%E7%BC%96%E8%AF%91%E5%99%A8%20c04b76a4aeff4fd38b1f92862e59186d/%25E6%2588%25AA%25E5%25B1%258F2022-07-25_21.40.21.png"/></a></figure><h3 id="9ef7d356-dafb-4545-b1f7-bc4cbb3aa976" class="">编译过程大致可以分为1个准备过程和三个处理过程：</h3><ol type="1" id="c2ba208b-33e8-46e0-83e6-84a3e66bf0bf" class="numbered-list" start="1"><li>初始化插入注解处理器</li></ol><ol type="1" id="e881bc6e-d522-4cd4-a3d8-04d5d4d8fcfe" class="numbered-list" start="2"><li>解析和填充符号表的过程：<ol type="a" id="8cb8272a-d4ca-4c8d-bbad-efe82dd1accd" class="numbered-list" start="1"><li>词法、语法分析将源代码的字符流变为标记集合，构造出抽象语法树。</li></ol><ol type="a" id="7345dbed-452a-437c-9f9c-f5a62adc5671" class="numbered-list" start="2"><li>填充符号表。产生符号地址和符号信息</li></ol></li></ol><ol type="1" id="d1c0045b-ef98-4f21-87a3-449233a0ce3f" class="numbered-list" start="3"><li>插入式注解处理器的注解处理过程：插入式注解处理器的执行阶段。</li></ol><ol type="1" id="19f439e1-1671-4f8a-aad4-564cccc7761e" class="numbered-list" start="4"><li>分析和字节码生成的过程<ol type="a" id="6cbd4a3a-e129-4cac-bac0-4783b88bdaf3" class="numbered-list" start="1"><li>标注检查。对语法的静态信息进行检查。</li></ol><ol type="a" id="be60f9ab-0971-4011-82f7-1c2c01424a8a" class="numbered-list" start="2"><li>数据流及控制流分析。对程序动态运行过程进行检查。</li></ol><ol type="a" id="9bf993e7-cf7b-47c3-8788-2a52dca2b170" class="numbered-list" start="3"><li>解语法糖。将简化代码编写的语法糖还原为原有的形式。</li></ol><ol type="a" id="bf2af656-1e2c-4f2b-9600-08ad9d195f40" class="numbered-list" start="4"><li>字节码生成。将前面各个步骤所生成的信息转化为字节码。</li></ol></li></ol><p id="69b0b111-c2f9-43bf-80ff-59452f0c2a2c" class=""><strong>上述的三个处理过程里，执行注解处理器又可能产生新的符号，如果有新的符号产生，回到之前的解析阶段，重新处理这些新的符号。</strong></p><p id="127ff958-7153-4a9d-a7e6-365afd3cc286" class=""><strong>Javac编译动作入口是</strong><strong><code>com.sun.tools.javac.man.JavaCompiler.compile();</code></strong><strong></strong></p><pre id="c8d80dbc-af54-4f0a-9eba-ca028003aedb" class="code"><code>// 准备过程 1 初始化插入注解处理器
+initProcessAnnotations(processors, sourceFileObjects, classnames);
+
+// 处理过程 1.1 parseFiles 词法分析，语法分析
+// 处理过程 1.2 enterTrees 输出到符号表
+// 处理过程 2 processAnnotations 执行注解处理
+processAnnotations(
+  enterTrees(stopIfError(CompileState.PARSE,initModules(stopIfError(CompileState.PARSE, 
+		parseFiles(sourceFileObjects))))),classnames);
+
+// …………………… 忽略中间代码
+
+
+case BY_TODO:
+		// 处理过程 3.1 attribute 标注检查
+		// 处理过程 3.2 flow 数据流控制流分析
+		// 处理过程 3.3 desugar 解语法糖
+		// 处理过程 3.4 生成最终字节码
+    while (!todo.isEmpty())
+        generate(desugar(flow(attribute(todo.remove()))));
+    break;</code></pre></blockquote><h1 id="dbad4fb7-8961-42bb-a522-1e99596fa638" class="">解析与填充符号表 - <code>处理过程 1</code></h1><h2 id="3c5846ea-593f-4515-9789-67ecfd2d01db" class="">词法分析、语法分析 - <code>处理过程 1.1 parseFiles</code></h2><blockquote id="15a53118-5a4d-4c0f-a468-513be3b7547a" class="block-color-gray_background"><strong><em>词法分析</em></strong>是将源代码的字符流转变为标记（Token）的过程，单个字符是程序编写时的最小字符，但标记才是编译时的最小元素。<p id="aa055db7-8fa0-4203-9f3a-94367021741c" class="">词法分析过程由<code>com.sun.tools.javac.parser.Scanner</code>类来实现。</p><p id="e8e6b713-2c01-483f-adf4-e520205b1e08" class=""><em><strong>语法分析</strong></em>是根据标记序列构造抽象语法数的过程，抽象语法树（<code>Abstract Syntax Tree AST</code>）是一种用来描述程序代码语法结构的树形表示方式，抽象语法树的每一个节点都代表着程序代码中的一个语法结构（<code>Syntax Construct</code>），例如：包，类型、修饰符、运算符、接口、返回值甚至代码注释都可以是一种特定的语法结构。</p><p id="75844ad6-0bf6-491e-a5b2-b875d6822839" class="">Java语法树由<code>com.sun.tools.javac.tree.JCTree</code>实现。</p><h3 id="ecbf6611-5b47-498d-97a8-941263e79fbb" class="">抽象语法树查看工具 </h3><figure id="a27873c4-0be9-4bfc-a801-f45c13bba3f1" class="link-to-page"><a href="https://www.notion.so/Eclipse-AST-View-a27873c40be94bfca801f45c13bba3f1"><img class="icon" src="../../%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB%20c22081b4fd29472587bf5bb5f45500b8/About%20Java%205751ca72d6ec48ca98420c3349859c5f/Eclipse%20AST%20View%20a27873c40be94bfca801f45c13bba3f1/logo-eclipse.png"/>Eclipse AST View</a></figure></blockquote><h2 id="dc0a54df-4fcb-4170-bd05-c0f638f9599d" class="">填充符号表 - <code>处理过程 1.2 </code><code><strong>enterTrees</strong></code></h2><blockquote id="ea9a96b3-11bb-4d3b-b165-c414a88267dd" class="block-color-gray_background"><em><strong>符号表</strong></em>（<code>Symbal Table</code>）是由一组符号地址和符号信息构成的数据结构。<p id="7db42474-bf1e-4545-891a-5a7059d3ce10" class="">填充符号表的过程由com.sun.tools.javac.comp.Enter类实现，该过程的产出物是一个待处理列表，其中包含了每一个编译单元的抽象语法树的顶级节点。</p></blockquote><h1 id="e74360c8-5e8f-4fde-b06f-5726eea4ac43" class="">注解处理器 - <code>处理过程 2 processAnnotations</code></h1><blockquote id="9bf315f5-15f1-41de-bdc1-fa092d8e1544" class="block-color-gray_background"><em><strong>插入式注解处理器</strong></em>可以看成一组编译器的插件，当这些插件工作时，允许读取、修改、添加抽象语法树的任意元素。如果插件对语法树进行了修改，编译器将回到解析阶段重新处理，直到所有插入式注解处理器都执行完修改，每一次循环称为一个轮次（<code>Round</code>）。<h3 id="f39cbf4b-2dce-41e1-acfd-668fa4ad0aeb" class="">案例：</h3><ul id="d692cf18-7b2b-4a82-9de8-058f9cfcd13a" class="bulleted-list"><li style="list-style-type:disc">Lombok </li></ul><ul id="0a30a3e3-1d32-45c4-bb21-8d3756da1cd7" class="bulleted-list"><li style="list-style-type:disc">CheckStyle</li></ul><ul id="d1906490-df88-4d96-ac73-899874779f0e" class="bulleted-list"><li style="list-style-type:disc">FindBugs</li></ul></blockquote><h1 id="abfe3e25-588b-49c7-b367-909e4256a9be" class="">语义分析与字节码生成 - <code>处理过程 3</code></h1><h2 id="b2ce879f-a143-4b57-9084-b5039219a8fa" class="">标注检查 - <code>处理过程 3.1 attribute</code></h2><blockquote id="557f7356-2acd-415f-9a9e-8023c0082652" class="block-color-gray_background"><em><strong>标注检查内容：</strong></em><ul id="becc35e6-d8d2-4f0e-abab-2098277b3410" class="bulleted-list"><li style="list-style-type:disc">变量使用前是否已声明</li></ul><ul id="ec6406a7-d866-4e30-a5ae-673904917d45" class="bulleted-list"><li style="list-style-type:disc">变量与赋值之间的数据类型是否能匹配</li></ul><ul id="3202c781-b9a4-427c-ba99-73fe1c685665" class="bulleted-list"><li style="list-style-type:disc">………………</li></ul><p id="208614c9-c87a-4afd-b73c-916683ccb6c2" class="">标注检查过程还会做一个<em><strong>常量折叠（</strong></em><em><strong><code>Constant Folding</code></strong></em>）的优化。</p></blockquote><div id="f7e41069-55d2-481f-8f07-cad2329c7b74" class="column-list"><div id="36883aca-f8b0-4c98-9418-55272b29e1f8" style="width:50%" class="column"><p id="e658ba96-6de7-44bf-8852-c46c83cc3052" class="">
+</p><blockquote id="e3720410-9560-46e9-b15a-643ef3e4e4d7" class="block-color-gray_background"><strong><code> int i = 1 + 2;</code></strong><p id="c94e7e3e-e818-4210-8f58-68a243536618" class=""><strong>抽象语法树表示为 </strong><code><strong>ConstantExpressionValue:3</strong></code></p></blockquote></div><div id="e8519d3a-aa23-48c4-861c-7fef68c50003" style="width:49.99999999999999%" class="column"><figure id="f583519c-5e33-4587-a49b-38a7afdf0942" class="image"><a href="Javac%E7%BC%96%E8%AF%91%E5%99%A8%20c04b76a4aeff4fd38b1f92862e59186d/%25E6%2588%25AA%25E5%25B1%258F2022-07-25_22.39.56.png"><img style="width:336px" src="Javac%E7%BC%96%E8%AF%91%E5%99%A8%20c04b76a4aeff4fd38b1f92862e59186d/%25E6%2588%25AA%25E5%25B1%258F2022-07-25_22.39.56.png"/></a></figure></div></div><p id="96c7491a-8f36-42ec-ab45-0bd9a0a8132a" class="">
+</p><h2 id="4d1bce72-c4dd-49b4-8d67-108867004839" class="">数据及控制流分析 - <code>处理过程 3.2 flow</code></h2><blockquote id="b0997bfa-dcd9-4aee-8c32-ff3f4334e8fe" class="block-color-gray_background"><em><strong>数据流分析和控制流分析是对程序的上下文进行进一步的验证：</strong></em><ul id="2c60797e-3237-440c-9646-2e724d217f11" class="bulleted-list"><li style="list-style-type:disc">程序局部变量在使用前是否有赋值</li></ul><ul id="466d980e-c4a0-4015-827a-1c8e1ab2947c" class="bulleted-list"><li style="list-style-type:disc">方法的每条路径是否有返回值</li></ul><ul id="e784ab5b-f448-4857-bbe9-4937847721fd" class="bulleted-list"><li style="list-style-type:disc">是否所有的受查异常都被正确处理</li></ul><ul id="690cf302-6d04-4f60-9eff-c04b976d5697" class="bulleted-list"><li style="list-style-type:disc">………………</li></ul></blockquote><h2 id="14b59c20-e5ee-4a22-8046-95f498597119" class="">解语法糖 - <code>处理过程 3.3 </code><code><strong>desugar</strong></code></h2><blockquote id="79f3f976-76f8-44f1-8c75-c63e188ce7b7" class="block-color-gray_background"><strong>Java常见语法糖：</strong><ul id="c12a691d-cd11-4d17-921a-2325f47fabf1" class="bulleted-list"><li style="list-style-type:disc">泛型</li></ul><ul id="b0fd5698-f693-4a53-91e1-5cc72d2539ce" class="bulleted-list"><li style="list-style-type:disc">变长参数</li></ul><ul id="bedd9fa3-61b8-4a91-8732-3a118a318e62" class="bulleted-list"><li style="list-style-type:disc">自动装箱、拆箱</li></ul><ul id="4ab2b5f1-e016-4868-9549-39adec12b390" class="bulleted-list"><li style="list-style-type:disc">foreach</li></ul><ul id="4a21ee2a-4f84-4903-aa4d-9693008f84e9" class="bulleted-list"><li style="list-style-type:disc">………………</li></ul><p id="c533e0f8-22ee-4595-b392-63532e05f61b" class=""><em><strong>Java虚拟机运行时并不支持这些语法，它们在编译阶段被还原回原始的基础语法结构。</strong></em></p></blockquote><h2 id="9de1905e-2308-4ce1-8b33-e14d1d457054" class="">字节码生成 - <code>处理过程 3.4 generate</code></h2><blockquote id="988e7762-7276-4726-bf27-88e8459b5aa8" class="block-color-gray_background">字节码生成是Javac编译过程的最后一个阶段，在Javac源码里面由<code>com.sun.tools.javac.jvm.Gen</code>类来完成。<p id="b6592eed-bdda-459a-af29-1be42b3efd72" class="">字节码生成阶段不仅仅是把前面各个步骤所生成的信息（语法树、符号表）转化为字节码指令写到磁盘中，编译器还进行了少量的代码添加和转换工作。</p><p id="0afd7b18-f5cf-40a9-86d1-b56a7c1c7c3e" class="">
+</p></blockquote></div></article></body></html>

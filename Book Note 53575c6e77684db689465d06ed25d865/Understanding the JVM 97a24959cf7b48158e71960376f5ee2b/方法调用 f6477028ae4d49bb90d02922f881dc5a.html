@@ -1,0 +1,850 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>方法调用</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-opaquegray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="f6477028-ae4d-49bb-90d0-2922f881dc5a" class="page sans"><header><h1 class="page-title">方法调用</h1></header><div class="page-body"><hr id="b5bf8282-5644-4381-b86f-fa47bef1bc01"/><nav id="a7412963-ff08-44bb-a277-547161eb02c1" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#4dc1169c-c426-4c8e-937e-9b758baf5ebb">解析  - <code>静态方法、私有方法、实例构造器、父类方法</code></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#b96dd0d9-5900-42d1-9c95-cabfbc7737ba">分派 - <code>继承 封装 多态</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#ad2d57a7-7259-4ca6-b470-42ae18a0dd79">静态分派 - <code>重载 Overload</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#365d98ed-e655-4a11-a89a-5da91d415917">动态分派 - <code>重写 Override</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#b3af6c92-f81b-42cd-84d9-5daa3cc89692">单分派与多分派</a></div></nav><blockquote id="1d153175-e940-4cf3-ba8c-2172e07b28b5" class="block-color-gray_background"><em><strong>方法调用并不等同于方法中的代码被执行，方法调用阶段唯一的任务就是确认被调用方法的版本（调用哪一个方法），暂时还未涉及方法内部的具体运行过程。</strong></em><p id="c2cc9404-b502-4feb-bd61-099fbb259641" class="">一切方法调用在Class文件里面存储的都只是符号引用，而不是方法在实际运行时内存布局的入口地址（直接引用）。这个特性给Java带来了更强大的动态扩展能力，但也使得Java方法调用过程变得相对复杂，某些调用需要在类加载期间，甚至到运行期间才能确定目标方法的直接引用。</p><ul id="fa24ce86-7a09-4832-abb7-66dace361997" class="bulleted-list"><li style="list-style-type:disc">解析</li></ul><ul id="444112fe-a496-414e-afc4-f873bb8bd185" class="bulleted-list"><li style="list-style-type:disc">分派</li></ul></blockquote><h1 id="4dc1169c-c426-4c8e-937e-9b758baf5ebb" class="">解析  - <code>静态方法、私有方法、实例构造器、父类方法</code></h1><blockquote id="c8c6dc66-2c76-462a-bfb1-81f9546017f2" class="block-color-gray_background">所有方法调用的目标方法在Class文件里面都是一个常量池的符号引用，在类加载的解析阶段，会讲其中一部分符号引用转化为直接引用，<em><strong>这种解析能够成立的前提：方法在程序真正运行之前就有一个可确定的调用版本，并且这个方法的调用版本在运行期时不可变的。这类方法的调用称为“解析”（</strong></em><code><em><strong>Resolution</strong></em></code><em><strong>）。</strong></em><p id="bda7b5ba-e4fb-422a-b3c4-4ad8fdf6a5e5" class=""><em><strong>符合“编译期可知，运行期不可变”的方法主要有静态方法和私有方法两大类。</strong></em></p><h3 id="8e31db38-03cf-4682-a616-581943c7f61f" class=""><strong>调用方法的指令</strong></h3><p id="37c5bc16-68f7-4a2c-9c3a-c78117741f7b" class="">调用不同的方法需要使用不同的指令。Java虚拟机支持一下指令</p><ul id="752d83d0-a174-4d91-aec4-9ccced6091d9" class="bulleted-list"><li style="list-style-type:disc"><code>invokestatic</code>：用于调用静态方法</li></ul><ul id="27fd8367-89d1-463e-a617-c6bff62552fe" class="bulleted-list"><li style="list-style-type:disc"><code>invokespecial</code>：用于调用实例构造器<code>&lt;init&gt;()</code>方法、私有方法和父类中的方法</li></ul><ul id="2ea869ee-3381-4098-911a-30fe57f89a95" class="bulleted-list"><li style="list-style-type:disc"><code>invokevirtual</code>：用于调用所有虚方法</li></ul><ul id="a252dfe5-9353-4b5b-a7ca-59930ab85d73" class="bulleted-list"><li style="list-style-type:disc"><code>invokeinterface</code>：用于调用接口方法，会在运行时再确定一个实现该接口的对象。</li></ul><ul id="69527ab1-9d21-4532-8f93-9e8f9243b8b9" class="bulleted-list"><li style="list-style-type:disc"><code>invokedynamic</code>：先在运行时动态解析出调用点限定符所引用的方法，然后再执行该方法。</li></ul><h3 id="5ca289e8-38bc-4d6e-b6e9-9db26a7b65b3" class=""><strong>非虚方法 &amp; 虚方法</strong></h3><p id="d7fe6888-bf29-437a-a034-35d43006202d" class="">只要被<code>invokestatic</code>和<code>invokespecial</code>指令调用的方法，都可以在解析阶段中确定唯一的调用版本，Java语言里符合这个条件的方法共有静态方法、私有方法、实例构造器、父类方法4种。再加上被<code>final</code>修饰的方法（尽管它使用<code>invokevirtual</code>指令调用），这5中方法调用会在类加载的时候就可以把符号引用解析为该方法的直接引用。这些方法统称为“非虚方法”（<code>Non-Virtual Method</code>）。与之相反，其他的方法就被称为“虚方法”（<code>Virtual Method</code>）。</p></blockquote><h1 id="b96dd0d9-5900-42d1-9c95-cabfbc7737ba" class="">分派 - <code>继承 封装 多态</code></h1><blockquote id="aa661074-17da-4f1a-ab94-0aa09dadac60" class="block-color-yellow_background"><em><strong>分派（</strong></em><code><em><strong>Dispatch</strong></em></code><em><strong>）调用可能静态的也可能动态的，按照分派依据宗量数分单分配和多分派。</strong></em></blockquote><h2 id="ad2d57a7-7259-4ca6-b470-42ae18a0dd79" class="">静态分派 - <code>重载 Overload</code></h2><blockquote id="d2287af8-48f7-4d52-b512-d17fbc9cee2d" class="block-color-gray_background"><em><strong>依赖静态类型来决定方法执行版本的分派动作，称为静态分派（</strong></em><em><strong><code>Static Dispatch</code></strong></em><em><strong>）</strong></em><p id="72d754bf-c78c-4e41-b9b0-7883ab4be5a1" class=""><em><strong>静态分派发生在编译阶段，因此确定静态分派的动作实际上不是由虚拟机来执行的，所有某些资料选择把静态分派归入“解析”而不是“分派”。</strong></em></p><p id="5ebdcc8b-f6f3-47e1-a998-199ff3c5990b" class="">静态类型和实际类型在程序中都可能发生变化，区别是静态类型的变化仅仅在使用时发生，变量本身的静态类型不会被改变，并且最终的静态类型是在编译期可知的；而实际类型变化的结果在运行期才可确定，编译器不可知。</p><pre id="5d8471ac-ad3b-4472-838f-bfb8e063ded8" class="code"><code>package org.fenixsoft.jvm.chapter8;
+/**
+ * 方法静态分派演示
+ */
+public class StaticDispatch {
+    static abstract class Human {    }
+    static class Man extends Human {    }
+    static class Woman extends Human {    }
+    public void sayHello(Human guy) {
+        System.out.println(&quot;hello,guy!&quot;);
+    }
+    public void sayHello(Man guy) {
+        System.out.println(&quot;hello,gentleman!&quot;);
+    }
+    public void sayHello(Woman guy) {
+        System.out.println(&quot;hello,lady!&quot;);
+    }
+    public static void main(String[] args) {
+        Human man = new Man();
+        Human woman = new Woman();
+        StaticDispatch sr = new StaticDispatch();
+        sr.sayHello(man);
+        sr.sayHello(woman);
+    }
+}
+// 结果 
+// hello,guy!
+// hello,guy!
+
+// 实际类型变化
+Human human = new Randow().nextBoolean() ? new Man() : new Woman();
+// 静态类型变化
+sr.sayHello((Man)human);
+sr.sayHello((Woman)human);</code></pre><p id="d5ff84cd-311f-41bb-a63c-0939e3c4006e" class="">上边的代码中，<code>Human</code>称为变量的“静态类型”（<code>Static Type</code>），或者叫“外观类型”（<code>Apparent Type</code>），后面的<code>Man</code>则被称为变量的“实际类型”（<code>Actual Type</code>）或者叫“运行时类型”（<code>Runtime Type</code>）。</p><h3 id="197124c2-86e2-4ddc-833f-12c8fdf40ce4" class="">重载的选择</h3><pre id="fcd5aec6-0700-47ad-88d0-2df08fd3b417" class="code"><code>package org.fenixsoft.jvm.chapter8;
+import java.io.Serializable;
+
+/**
+ * 重载方法优先级
+ */
+public class Overload {
+    public static void sayHello(Object arg) {
+        System.out.println(&quot;hello Object&quot;);
+    }
+    public static void sayHello(int arg) {
+        System.out.println(&quot;hello int&quot;);
+    }
+    public static void sayHello(long arg) {
+        System.out.println(&quot;hello long&quot;);
+    }
+    public static void sayHello(Character arg) {
+        System.out.println(&quot;hello Character&quot;);
+    }
+    public static void sayHello(char arg) {
+        System.out.println(&quot;hello char&quot;);
+    }
+    public static void sayHello(char... arg) {
+        System.out.println(&quot;hello char ...&quot;);
+    }
+    public static void sayHello(Serializable arg) {
+        System.out.println(&quot;hello Serializable&quot;);
+    }
+    public static void main(String[] args) {
+        sayHello(&#x27;a&#x27;);
+    }
+}
+// 结果 &quot;hello char&quot;</code></pre><ol type="1" id="20bb1de2-df8b-41c4-8cc8-432fe30c50e4" class="numbered-list" start="1"><li>如果注释了<code>sayHello(char arg)</code>，将输出<code>hello int</code>，这时发生了一次自动类型转换，<code>char</code> -&gt; <code>int</code>。</li></ol><ol type="1" id="395a3004-9ad1-4aff-bea4-481c60f6d12a" class="numbered-list" start="2"><li>如果注释了<code>sayHello(int arg)</code>，将输出<code>hello long</code>，这时发生两次自动类型转换，<code>char</code> -&gt; <code>int</code> -&gt; <code>long</code>。</li></ol><blockquote id="ac6b207f-af64-4ee3-9a96-b0d6e315276f" class="block-color-yellow_background"><em><strong>类型转换必须是安全的，上边的例子会按照 char -&gt; int -&gt; long -&gt; float -&gt; double转换。</strong></em></blockquote><ol type="1" id="6b766cb7-2687-4216-a29f-be4ae893c7e3" class="numbered-list" start="3"><li>如果注释了<code>sayHello(long arg)</code>，将输出<code>hello Character</code>，这时发生一次自动装箱。</li></ol><ol type="1" id="bf3e307b-fa5a-4883-9d18-e8db29bb8570" class="numbered-list" start="4"><li>如果注释了<code>sayHello(long Character</code>)<code>，</code>将输出<code>hello Serializable，</code>Serializable是Character`实现的一个接口。</li></ol><blockquote id="020a42cc-96c0-45e4-9eb7-2bcb65475364" class="block-color-yellow_background"><em><strong>如果类实现了多个接口，并且都提供了sayHello(Interface arg)，由于没有优先级，所以编译器无法确定是哪个接口，会提示“类型模糊”（</strong></em><em><strong><code>Type Ambiguous</code></strong></em><em><strong>）而拒绝编译。</strong></em></blockquote><ol type="1" id="f6457d34-2f89-4145-a631-89ab11aecf94" class="numbered-list" start="5"><li>如果注释了<code>sayHello(long Serializable</code>)，将输出<code>hello Object</code>，<code>char</code>装箱后转型为父类<code>Object</code>。</li></ol><blockquote id="246e1815-c585-4b83-9c7c-e8a051ab3dd5" class="block-color-yellow_background"><em><strong>如果有多个父类，那将按继承关系中从下往上开始搜索，越上层优先级越低。</strong></em></blockquote><ol type="1" id="13dca464-7e0d-435f-8847-69b25728ad5f" class="numbered-list" start="6"><li>如果注释了<code>sayHello(long Object</code>)，将输出<code>hello char ...</code>，可变长参数的重载优先级是最低的，<code>a</code>字符被当作一个<code>char[]</code>数组的元素。</li></ol></blockquote><h2 id="365d98ed-e655-4a11-a89a-5da91d415917" class="">动态分派 - <code>重写 Override</code></h2><blockquote id="9588f8ae-c968-4909-8909-eefc019fda78" class="block-color-gray_background"><em><strong>依赖动态类型来决定方法执行版本的分派动作，称为动态分派</strong></em><pre id="22fddefb-d438-428e-aa37-fdfdadd62d72" class="code"><code>package org.fenixsoft.jvm.chapter8;
+/**
+ * 方法动态分派演示
+ * 
+ */
+public class DynamicDispatch {
+    static abstract class Human {
+        protected abstract void sayHello();
+    }
+    static class Man extends Human {
+        @Override
+        protected void sayHello() {
+            System.out.println(&quot;man say hello&quot;);
+        }
+    }
+    static class Woman extends Human {
+        @Override
+        protected void sayHello() {
+            System.out.println(&quot;woman say hello&quot;);
+        }
+    }
+    public static void main(String[] args) {
+        Human man = new Man();
+        Human woman = new Woman();
+        man.sayHello();
+        woman.sayHello();
+        man = new Woman();
+        man.sayHello();
+    }
+}
+// 结果
+// man say hello
+// woman say hello
+// woman say hello</code></pre><p id="7964110e-9cb0-494e-9e61-9144d93780de" class=""><code>invokevirtual</code>指令并不是把常量池中方法的符号引用解析到直接引用上就结束了，</p><p id="78a745ad-ac1b-4fed-ae4b-ab621ca15bd0" class="">还会根据方法接收者的实际类型来选择方法版本。这个过程就是<code>Java</code>语言中方法重写</p><p id="954e967a-fc80-4e0b-95ad-69c57a2fc33b" class="">的本质。</p><h3 id="6cd9459d-820f-4efa-aadd-a13e900df813" class="">根据《Java虚拟机规范》 invokevirtual 指令的运行时解析过程：</h3><ol type="1" id="678da788-02bb-45c7-89eb-40590421404f" class="numbered-list" start="1"><li>找到操作数栈顶的第一个元素所指向的对象的实际类型，记作C。</li></ol><ol type="1" id="99df007d-378c-4c54-8534-100fe0229121" class="numbered-list" start="2"><li>如果在类型C中找到与常量中的描述符和简单名称都相符的方法，则进行访问权限校验，如果通过则返回这个方法的直接引用，查找过程结束；不通过则返回<code>java.lang.IllegalAccessError</code>异常。</li></ol><ol type="1" id="36dd9d47-4504-433b-a004-7c5c91dc8fb8" class="numbered-list" start="3"><li>否则，按照继承关系从下往上依次对C的各个父类进行第二步的搜索和验证过程。</li></ol><ol type="1" id="4d05047a-bd03-4a49-9612-ef7f8f9ca8ee" class="numbered-list" start="4"><li>如果始终没有找到合适的方法，则抛出<code>java.lang.AbstractMethodError</code>异常。</li></ol><h3 id="a64d2c9b-cfae-4401-a919-b0794f85178c" class=""><strong>字段不参与多态</strong></h3><pre id="75fd35b0-ff09-4370-a39e-1d897e2d70c6" class="code"><code>package org.fenixsoft.jvm.chapter8;
+
+/**
+ * 字段不参与多态
+ */
+public class FieldHasNoPolymorphic {
+
+    static class Father {
+        public int money = 1;
+
+        public Father() {
+            money = 2;
+            showMeTheMoney();
+        }
+
+        public void showMeTheMoney() {
+            System.out.println(&quot;I am Father, i have $&quot; + money);
+        }
+    }
+
+    static class Son extends Father {
+        public int money = 3;
+
+        public Son() {
+            money = 4;
+            showMeTheMoney();
+        }
+
+        public void showMeTheMoney() {
+            System.out.println(&quot;I am Son,  i have $&quot; + money);
+        }
+    }
+
+    public static void main(String[] args) {
+        Father gay = new Son();
+        System.out.println(&quot;This gay has $&quot; + gay.money);
+    }
+}
+
+// 结果 
+// I am Son,  i have $0
+// I am Son,  i have $4
+// This gay has $2</code></pre><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="aeab4ce0-f12b-4187-997e-7b61708d13f8"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">创建<code>Son</code>对象时，首先隐式调用了<code>Father</code>的构造函数，而<code>Father</code>的构造函数中对<code>showMeTheMoney()</code>的调用是一次虚方法调用，执行的是实际类型的实现，也就<code>Son</code>的实现，此时<code>Son</code>的money还没有初始化，所以输出<code>I am Son, i has $0</code>。之后就是<code>Son</code>自己的构造函数，输出<code>I am Son, i has $4</code>。最后一句通过静态类型（<code>Father</code>）访问到了父类中的<code>money</code>，输出了2。（字段不参与多态）。</div></figure></blockquote><h2 id="b3af6c92-f81b-42cd-84d9-5daa3cc89692" class="">单分派与多分派</h2><blockquote id="7765cce1-faa0-456d-9ca7-bd49e1749707" class="block-color-gray_background"><strong>方法的接收者与方法的参数统称为方法的宗量，根据分派基于多少种宗量，可以将分派划分为单分派和多分派两种。</strong><p id="72ef7754-9753-4739-aa19-d63d67d83ea7" class=""><strong>单分派是基于一个宗量对目标方法进行选择，多分派是根据多于一个宗量对目标方法进行选择。</strong></p><p id="411c7516-9612-4f57-a0aa-26f604f66f90" class=""><em><strong>Java语言的静态分配属于多分派类型。</strong></em></p><p id="55b0ef06-678a-4de4-9468-0d8624e377d3" class=""><em><strong>Java语言的动态分配属于单分派类型。</strong></em></p><pre id="e509947b-2455-4eab-ab1a-00a7e02bbc57" class="code"><code>package org.fenixsoft.jvm.chapter8;
+
+/**
+ * 单分派、多分派演示
+ */
+public class Dispatch {
+
+    static class QQ {}
+
+    static class _360 {}
+
+    public static class Father {
+        public void hardChoice(QQ arg) {
+            System.out.println(&quot;father choose qq&quot;);
+        }
+
+        public void hardChoice(_360 arg) {
+            System.out.println(&quot;father choose 360&quot;);
+        }
+    }
+
+    public static class Son extends Father {
+        public void hardChoice(QQ arg) {
+            System.out.println(&quot;son choose qq&quot;);
+        }
+
+        public void hardChoice(_360 arg) {
+            System.out.println(&quot;son choose 360&quot;);
+        }
+    }
+
+    public static void main(String[] args) {
+        Father father = new Father();
+        Father son = new Son();
+        father.hardChoice(new _360());
+        son.hardChoice(new QQ());
+    }
+}
+
+// 结果
+// father choose 360
+// son choose qq</code></pre><p id="c28f93df-15d8-4a7d-b6dc-675d0b89313c" class="">编译阶段中编译器的选择过程就是静态分派的过程。这时候选择目标方法的依据有两点：</p><ul id="05d6574f-c9ee-4310-8f8f-d3b93e2deb18" class="bulleted-list"><li style="list-style-type:disc">静态类型是<code>Father</code>还是<code>Son</code></li></ul><ul id="0272270c-822b-480a-9c39-83bfb93c7fcf" class="bulleted-list"><li style="list-style-type:disc">方法参数是<code>QQ</code>还是<code>_360</code></li></ul><p id="b712ca20-5094-45a2-a4c9-d5608bdc69ab" class="">这次的选择就过的最终产物是产生了两条<code>invokevirtual</code>指令，这两条指令的参数分别</p><p id="6d720bb8-8056-4c84-96d9-352310d0a54b" class="">为常量池中指向<code>Father::hardChoice(_360)</code>以及<code>Father::hardChoice(QQ)</code>方法的符号引用。</p><p id="245c96ca-0c47-4ee8-ad75-e623ae72edf4" class=""><em><strong>因为是根据两个宗量进行选择，所以</strong></em><em><strong><code>Java</code></strong></em><em><strong>语言的静态分派属于多分派类型（静态类型+方法参数）。</strong></em></p><p id="90c3ff15-8dc2-49a2-9faf-f2923476a35a" class="">运行阶段虚拟机的选择，也就是动态分派的过程。在执行<code>invokevirtual</code>指令时，虚拟机不会</p><p id="ba9ba789-ce2f-4668-89a5-fc9c3c53e8c8" class="">关心传递过来的参数是什么，因为这时候参数是静态类型还是实际类型都对方法的选择不构成</p><p id="e8db1e73-6b9b-4a5f-98ee-5fe177c988c3" class="">任何影响，唯一可以影响虚拟机选择的因素只有该方法的接收者的实例类型是<code>Father</code>还是<code>Son</code>。</p><p id="50c49c0f-5df9-4f19-b76b-941187d7986f" class=""><em><strong>因为只有一个宗量作为选择依据，所以</strong></em><em><strong><code>Java</code></strong></em><em><strong>语言的动态分派属于单分派类型。</strong></em></p></blockquote></div></article></body></html>

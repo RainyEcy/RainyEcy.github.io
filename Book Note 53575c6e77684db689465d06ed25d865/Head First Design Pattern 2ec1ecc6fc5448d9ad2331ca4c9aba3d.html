@@ -1,0 +1,671 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Head First Design Pattern</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-opaquegray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="2ec1ecc6-fc54-48d9-ad23-31ca4c9aba3d" class="page sans"><header><div class="page-header-icon undefined"><img class="icon" src="Head%20First%20Design%20Pattern%202ec1ecc6fc5448d9ad2331ca4c9aba3d/111.png"/></div><h1 class="page-title">Head First Design Pattern</h1></header><div class="page-body"><hr id="95f3a7f5-5cfc-428b-b6b3-1cfbb8e1a148"/><nav id="c1a1a23d-9c2f-49e4-adcc-1ceb2fa4f37e" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#3fe8d4fc-4cec-4161-affb-b9b093b0f143">思维图</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#e3ebcb4a-2aa8-41de-b077-54182e3d2804">模式思考</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#220c5c05-3698-4ec2-8641-95b9d13b1e2a">设计模式</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#8b67916d-8e15-44b9-927a-b11ac3807dec">策略模式 P·24 - <code>Strategy Pattern</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#4c11b42c-02b7-4715-a710-94aca1444e6f">观察者模式 P·51 - <code>Observer Pattern</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#b6ea5e9d-1f40-4602-bce3-5b5268f67860">装饰者模式 P·91 - <code>Decorator Pattern</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#a7768753-45bf-49bc-b0c3-925425b706e1">工厂方法 P·134 - <code>Factory Method</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#679d92e9-26a4-409c-a22f-93f2b90e65d5">抽象工厂模式 P·156 - <code>Abstract Factory</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#7834a9ce-8476-4086-afa2-a0078de0a17b">单件模式 P·177 - <code>Singletion Pattern</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#7c3e218f-2f2d-4b14-af76-eed15e5cfb8b">命令模式 P·206 - <code>Command Pattern</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#d0636be3-f88c-487d-b22a-6325e8118ff0">适配器模式 P·243 - <code>Adapter Pattern</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#77843fb7-23e2-4ed7-ab11-1284e1ba612d">外观模式 P·264 - <code>Facede Pattern</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#e0b226ed-79fe-414e-8ac6-5659c3556c98">模版方法模式 P·289 - <code>Temple Method Pattern</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#4158b41c-891e-4cef-987b-a85ca5330245">迭代器模式 P·336 - <code>Itertor Pattern</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#8cffd089-a60c-48fe-a220-8426077a7d6d">组合模式 P·256 - Combining Pattern</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#77170142-666d-4e18-b0df-6fe279bf7072">状态模式 P·410 - <code>State Pattern</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#e402ee44-16f1-423e-9d88-381fca97f73f">代理模式 P·460 - <code>Proxy Pattern</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#f4af52fc-c8fa-4bbf-950e-1cf54c974215">复合模式 P·560</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#00663fdc-820a-422f-ac8b-9d5f2ecbfa4f">OO设计原则</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#17964051-c654-404d-bedc-892dc902a086">封装变化 P·9 - <code>把问题归零</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#b420124d-0deb-4442-83dd-afff8db85790">针对接口编程 P·11 - <code>接口代表每个具体的行为</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#d88358d8-f76a-465f-99d2-23ebdc88a4bc">多用组合，少用继承 P·23 - <code>”有一个“可能比”是一个“更好</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#e7b82772-6a27-4547-8373-d58f6ca0c89d">松耦合 P·53 - <code>为了交互对象之间的松耦合设计而努力</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#4c0218e8-bec1-4f51-bf29-c1156238d131">对扩展开放，对修改关闭 P·86 -  <code>组合&amp;委托</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#b496ac2f-bd39-4c35-989f-049e2e1b64a6">依赖倒置 P·139 - <code>依赖于抽象</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#4ed47829-e8eb-4d3f-a643-bb140f0ad867">“最少知识” P·265 - <code>减少依赖</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#bb5c4e27-d433-480b-8260-9416616c457e">好莱坞原则 P·296 - <code>DI协作</code></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#2ddffe7d-bc70-401d-bfee-4e742bda182f">单一职责 P·339 - <code>高内聚</code></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#869b8db1-67b0-44b5-a7be-02c42b433528">问题思考</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#425d9026-f065-4f4d-a99c-98892e8c87d9"><strong>如果设计模式这么棒，为何没有人建立相关的库？P·29</strong></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#febc18de-47ed-4c7e-8f40-866e5293bb7e"><strong>库和框架不也是设计模式吗？P·29</strong></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#20b646ee-fc42-44c4-94b6-f1787d9f6a10">有<strong>没有所谓设计模式的库？P·29</strong></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#9c9a3644-e677-4814-9015-4111735c0c62">【】<strong>观察者模式的实现细节相关问题 P·59</strong></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#6f10eaff-dcc9-4c44-9caf-04da3c0c1613">对扩展开放，对修改关闭？设计如何兼顾？P·87</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#0eb64701-bfc1-4fcc-961e-937ce3f31abf">如何将某件东西设计成可以扩展，又禁止修改？P·87</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#1a31ac4b-6a4c-479b-9305-da474b599853">如何让设计的每部分遵循开闭原则？P·87</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#1f22538d-82a7-42e9-bc41-66ab1b38c832">【】装饰者的实现细节相关问题 P·99</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#12d51d56-05dc-4921-93c4-c9e12001a0a3">【】简单工厂方法的思考 P·115</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#dd401cc8-035d-4bca-8710-13fbc87f8c57">【】工厂模式的细节相关问题 P·35</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#62ba031b-aa5a-407e-940f-d3e41f94784a">工厂方法和创建者是否总是抽象的？P·35</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#3a641e26-c697-4a16-a6d5-d9b986e4bf98">简单工厂和工厂方法之间的差异？P·35</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#c59b102d-d20c-49c8-99a1-5043c957ddf5">工厂方法是不是潜伏在抽象工厂里面？P·158</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#d1251eaa-4bb5-4bf2-bf92-78afc9524b7b">【】单件的细节相关问题 P·184</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#de6a7c08-0030-4161-8627-4d7412375039">命令模式接收者一定有必要存在吗？为何命令对象不直接实现execute细节？P·227</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#b4fd4253-c186-48e3-b704-af9e956d62d4">命令模式如何实现多层次的撤销操作？P·227</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#29e60c74-e1d4-4d4a-8021-aff61fdc9db3">命令模式宏命令实现（Party Mode）？P·227</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#164cd5dc-93ea-4dd6-a2da-9a327f402619">一个适配器需要做多少“适配”的工作？如果我需要实现一个很大的目标接口，似乎有“很多”工作要做。P·242</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#5a163ebc-92d1-434f-817e-72dd985cb263">一个适配器只能够封装一个类吗？P·260</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#57dfe5c5-fb68-4911-9187-6844d3975a53">如果外观封装了子系统的类，那么需要低层功能的客户如何接触？P·260</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#3ad62f60-fae0-46e1-afc6-76a436b735ab">外观会新增功能吗，或者它只是将每一个请求转由子系统执行？P·260</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#471ef86d-cf45-4d25-9ec3-3c0415e60752">每个子系统只能有一个外观吗？P·260</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#3ac178aa-bbc1-4cd5-9995-59a46c877cc9">除了提供一个简单的接口，外观模式还有其他优点吗？P·260</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#2b776ee4-edb3-4ae2-a84f-27d41ea70525">适配器与外观包装的区别？P·260</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#e9818102-7325-4c05-b4cf-3cdc64b1d8dd">最少知识原则和Law of Demeter<strong>得墨忒耳定律？P·267</strong></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#7b501d5f-d6f6-48aa-a418-776493938115">采用最少知识原则有什么缺点？<strong>P·267</strong></a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#9820cef9-291f-4310-bb39-544225d66420">当我创建一个模版方法时，怎么才能知道什么时候使用抽象方法，什么时候使用钩子呢？P·295</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#e0c303d4-9f86-4b67-a646-30ae5e194820">模版方法使用钩子真正的目的是什么？P·295</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#70e06d39-1b09-4db9-94f2-750bf0c9436f">似乎应该保持抽象方法的数目越少越好？P·295</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#4b74afc7-a86a-461e-9bb7-f82933ce7c4b">好莱坞原则和依赖导致原则之间的关系？P·298</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#b5934b63-2c53-47b5-a10b-64f0a1f580b2">低层组件不可以调用高层组件的方法吗？P·298</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#5f226be5-4e26-4148-971a-14b012645331">【】模版方法模式的细节相关问题 P·305</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#f6d112ee-ba78-4702-aa1c-6bf915c1a469">【】迭代器模式的细节相关问题 P·332 P·338</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#3df35317-00f9-4069-981c-99701deef30c">组件、组合、树？P·358</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#581977d9-093d-40e0-8f2d-5780cec55ffc">组合模式与迭代器？P·358</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#e52f33f0-b437-46c9-ac75-ed717b913083">状态模式的实现细节相关问题 P·412</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#7dc9d42a-9202-4f1f-a382-eb52065b869d">代理模式的实现细节相关问题 P·471</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#6238bc52-82b3-438f-becd-f517de75812a">JDK“动态代理”的相关问题 P·486</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#fa440c77-30f2-4aa0-b053-566c96bfb650"></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#3662bd02-a4af-41bb-9773-96c194a03aea">围炉夜话 &amp; 模式访谈</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#836a8ab7-3bd7-48ea-a976-7f470e58b414">主题和观察者就使观者者获得状态信息的正确方法发生了争吵 P·62</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#c8fbb7e6-04c0-45a8-95dc-033a41f83952"> 装饰者的告白 P·104</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#6efc4b32-6841-4643-9f00-e4869dfd4992">工厂方法和抽象工厂 P·158</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#15e9485d-c5ae-49c8-afd5-590e77b41d61">单件的告白 P·174</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#d13b2fa2-ee60-4fcd-81fd-7c8f86aa0636">对象适配器和类适配器的面对面接触 P·247</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#869aa7a0-ac1d-4785-9330-b9177a56ef8d">装饰者模式和适配器模式讨论彼此的差异 P·252</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#06165ddd-00d5-46d5-bfd1-c21304793a9d">模版方法和策略的比较 P·308</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#6d03720a-f80b-4b7e-81c1-1629567f541c">组合模式，我们要讨论他在实现上的问题 P·376</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#a0e6716d-12af-4143-bc8c-c343df552196">策略模式与状态模式重聚 P·418</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#7dc065b4-0b98-4a13-bb99-e4f22ad9cf39">代理和装饰者的意图 P·472</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#f8126c00-e301-4ce0-9268-d719cba7f6e0">大师与门徒</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#fc09c1fd-b897-4cb9-814b-1ef5cd4a5093">利用组合和委托在运行时具有继承行为的效果 P·85</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#6420a882-f058-418f-9f93-f0b1123ac840">封装变化对抽象编码（工厂） P·136</a></div></nav><h1 id="3fe8d4fc-4cec-4161-affb-b9b093b0f143" class="">思维图</h1><hr id="4f85fba8-2077-40aa-9c8d-c9219581dcc3"/><figure id="8bfd6f58-1ff8-48eb-be6d-7628c6414ccd"><div class="source"><a href="Head%20First%20Design%20Pattern%202ec1ecc6fc5448d9ad2331ca4c9aba3d/Head_First_.pdf">https://s3-us-west-2.amazonaws.com/secure.notion-static.com/f5996326-75ec-4ba3-a336-d06926322a2f/Head_First_.pdf</a></div></figure><h1 id="e3ebcb4a-2aa8-41de-b077-54182e3d2804" class="">模式思考</h1><hr id="8e11aaaf-b0ff-4147-83a1-061ef560bf28"/><blockquote id="06e1901d-72af-456d-b095-8a69f42d97c2" class="block-color-red_background"><strong><em>思考模式的运用：</em></strong><h3 id="3a901921-0f09-4be1-a9d5-4bf70fda6d2b" class="">保持简单</h3><h3 id="44ce0d2d-ef6a-4d89-9752-85572c495aaf" class="">设计模式并非万灵丹</h3><h3 id="3c0b33a9-0684-4cec-8aba-d4a65820aab2" class="">何时使用模式</h3><h3 id="c2ab76d9-c739-4acf-a535-1485b0cd8418" class="">重构的时间就是模式的时间</h3><h3 id="4ea0a1fd-51aa-46f1-8848-a5d5c6d26fe1" class="">拿掉所不需要的，不要害怕将一个设计模式从设计中移除</h3><h3 id="a884f16a-e6d9-4cea-8a47-bfacd1f0a765" class="">如果你现在不需要，就别做</h3></blockquote><h1 id="220c5c05-3698-4ec2-8641-95b9d13b1e2a" class="">设计模式</h1><blockquote id="fecde4d8-c445-4c17-8fb9-ecfeb60c9117" class="block-color-gray_background"><strong>Head First 设计模式</strong><p id="acc42ebc-3e9e-4ff3-a174-b1cae816f705" class=""><strong>Code: </strong></p><figure id="5ca70d42-8213-4730-9e94-2185430471c2"><a href="https://github.com/RainyEcy/HeadFirstCode" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">GitHub - RainyEcy/HeadFirstCode</div><div class="bookmark-description">You can&#x27;t perform that action at this time. You signed in with another tab or window. You signed out in another tab or window. Reload to refresh your session. Reload to refresh your session.</div></div><div class="bookmark-href"><img src="https://github.com/favicon.ico" class="icon bookmark-icon"/>https://github.com/RainyEcy/HeadFirstCode</div></div><img src="https://opengraph.githubassets.com/46df5452fa28c97e2f4168f509652efabf9c7a5e64dd0e312f84f10c8830ca00/RainyEcy/HeadFirstCode" class="bookmark-image"/></a></figure><p id="393dc4e7-e634-452b-b8ba-f56f04e66705" class=""><strong>GOF 设计模式：</strong></p><figure id="8e4f01ad-1065-4d8d-a1bb-6868c2fb7ce6" class="link-to-page"><a href="Design%20Patterns%208e4f01ad10654d8da1bb6868c2fb7ce6.html"><img class="icon" src="Design%20Patterns%208e4f01ad10654d8da1bb6868c2fb7ce6/1.png"/>Design Patterns</a></figure></blockquote><hr id="9aeba4fc-605f-4849-bcc3-bc6e5f9785b0"/><h3 id="8b67916d-8e15-44b9-927a-b11ac3807dec" class="">策略模式 P·24 - <code>Strategy Pattern</code></h3><blockquote id="7c7c520d-f36a-4928-abe1-ffc4a1d67a8e" class="block-color-blue_background"><em><strong>定义算法族，分别封装起来，让它们之间可以互相替换，此模式让算法的变化独立于使用算法客户。</strong></em></blockquote><h3 id="4c11b42c-02b7-4715-a710-94aca1444e6f" class="">观察者模式 P·51 - <code>Observer Pattern</code></h3><blockquote id="29949273-86fe-4f6b-9136-932131656737" class="block-color-blue_background"><em><strong>在对象之间定义一对多的依赖，这样一来，当一个对象发生改变，其他的对象都会收到通知，并自动更新。</strong></em><ul id="93f6711d-28a4-4c79-8638-609986c4cd33" class="bulleted-list"><li style="list-style-type:disc">观察者模式定义了对象之间一对多的关系</li></ul><ul id="5b79c5fc-8b49-4625-b06a-8d8ae9fe706d" class="bulleted-list"><li style="list-style-type:disc">主题（被观察者）用一个共同的接口来更新被观察者</li></ul><ul id="e2057627-6fa1-45fd-80ce-a5f7ca92e9df" class="bulleted-list"><li style="list-style-type:disc">观察者与可观察者之间用松耦合的方式进行结合，可观察者不知道观察者实现的细节，只知道观察者实现了观察者接口</li></ul><ul id="53b3af6d-a5aa-492a-8e77-258a17c92e3e" class="bulleted-list"><li style="list-style-type:disc">使用此模式，你可以从被观察者处PUSH或者PULL</li></ul><ul id="6035e281-c406-4b70-8983-b298239f7ad6" class="bulleted-list"><li style="list-style-type:disc">有多个观察者时不可以依赖特定的通知次序</li></ul><ul id="c6472a7f-051a-405f-8c42-b68959ffe1d7" class="bulleted-list"><li style="list-style-type:disc">JAVA有多种观察者模式的实现，包括了通用的java.util.Observable</li></ul><ul id="5d564967-9583-41f7-98a0-8ee3c2554359" class="bulleted-list"><li style="list-style-type:disc">要注意java.util.Observable实现上所带来的一些问题</li></ul><ul id="785021bb-8000-4fa5-bb59-5d2007ed0535" class="bulleted-list"><li style="list-style-type:disc">Swing大量使用观察者模式，许多GUI的框架也是如此</li></ul><ul id="986d0078-9e03-4acb-b31a-c4895b96613a" class="bulleted-list"><li style="list-style-type:disc">此模式也被应用在许多地方，JavaBeans、RMI</li></ul></blockquote><p id="d7c57a1a-2775-4c4b-9aed-ea37eb848607" class="">
+</p><h3 id="b6ea5e9d-1f40-4602-bce3-5b5268f67860" class="">装饰者模式 P·91 - <code>Decorator Pattern</code></h3><blockquote id="eee00b1a-3fb2-440a-a33d-90a53950097e" class="block-color-blue_background"><em><strong>动态地将责任附加到对象上。想要扩展功能，装饰者提供有利于继承的另一种选择</strong></em><ul id="2553a254-cba2-44ec-bd90-788251efab34" class="bulleted-list"><li style="list-style-type:disc">继承属于扩展形式之一，但不见得是达到弹性设计的最佳方案</li></ul><ul id="1d7c6c4b-dc00-4d11-8bd8-8ce0044c5ca5" class="bulleted-list"><li style="list-style-type:disc">在我们的设计中，应该允许行为可以被扩展，而且不需要修改现有的代码</li></ul><ul id="d42154fe-36bc-47bb-afed-c3007348ef09" class="bulleted-list"><li style="list-style-type:disc">组合和委托可用于在运行时加入新的行为</li></ul><ul id="7287bb22-7ddc-47fd-8472-bf1bce84e368" class="bulleted-list"><li style="list-style-type:disc">除了继承，装饰者模式也可以让我们扩展行为</li></ul><ul id="4dd86422-5b06-4a14-8375-4aa1d6b594eb" class="bulleted-list"><li style="list-style-type:disc">装饰者模式意味着一堆装饰者类，这些类用于包装具体组件</li></ul><ul id="4b77d7d4-d396-4c01-850c-b662ae8b933c" class="bulleted-list"><li style="list-style-type:disc">装饰者类反映出被装饰的组件类型（事实上，他们拥有着相同的类型，都经过接口或者继承实现）</li></ul><ul id="95f930d3-f231-48dd-9ced-274dac48d84d" class="bulleted-list"><li style="list-style-type:disc">装饰者可以在被装饰者的前/后加上自己的行为，甚至覆盖被装饰者的行为，从而达到特定的目的</li></ul><ul id="cc847163-4199-4db6-b0ef-14112c62cabc" class="bulleted-list"><li style="list-style-type:disc">你可以用无数个装饰者包装你的组件</li></ul><ul id="ecd823ab-ee4b-4b08-aed7-d0d77f8c68cd" class="bulleted-list"><li style="list-style-type:disc">装饰者一般对组件的客户是透明的，除非客户程序依赖于组件的具体类型</li></ul><ul id="fe6b8911-b814-4a08-b5df-309e7b3457b2" class="bulleted-list"><li style="list-style-type:disc">装饰者模式会导致设计中出现很多的小对象，如果过度使用，会让程序变得过于复杂</li></ul></blockquote><h3 id="a7768753-45bf-49bc-b0c3-925425b706e1" class="">工厂方法 P·134 - <code>Factory Method</code></h3><blockquote id="b6cc2297-70dc-405a-9f13-0d37dc274adb" class="block-color-blue_background"><em><strong>定义一个创建对象的接口，但由子类决定实例化的类是哪一个。工厂方法让类把实例化方法推迟到子类</strong></em><ul id="843a1c20-c151-42a9-b601-623e0ee0c768" class="bulleted-list"><li style="list-style-type:disc">所有工厂都是用来封装对象的创建</li></ul><ul id="243afdfe-b080-44d8-922e-99c48fe9bf38" class="bulleted-list"><li style="list-style-type:disc">简单工厂，虽不是设计模式，但不失为一个简单的方法，可以将客户端程序从具体类中解耦</li></ul><ul id="60ce5de3-202e-44bb-8fde-d0fe69c316c8" class="bulleted-list"><li style="list-style-type:disc">工厂方法使用继承，把对象的创建委托给子类，子类实现工厂方法来创建对象</li></ul><ul id="bf85af89-d72e-4b74-9bc4-6d871d01feb7" class="bulleted-list"><li style="list-style-type:disc">所有工厂方法都通过减少应用程序与具体类的依赖促进松耦合</li></ul><ul id="860be8d2-8e8d-45f7-913a-2d2ddfb0b6d4" class="bulleted-list"><li style="list-style-type:disc">工厂方法允许类将实例化推迟到子类进行</li></ul><ul id="eaa48a6f-df16-446e-ab6b-b52c83341ff9" class="bulleted-list"><li style="list-style-type:disc">工厂是很有威力的技巧，使我们针对抽象编程，而不需要针对具体类编程</li></ul></blockquote><h3 id="679d92e9-26a4-409c-a22f-93f2b90e65d5" class="">抽象工厂模式 P·156 - <code>Abstract Factory</code></h3><blockquote id="47239d93-5a31-4fc0-b6e1-5cad5c39dc3a" class="block-color-blue_background"><em><strong>提供一个接口，用来创建相关与依赖对象的家族，而不需要明确指定具体类</strong></em><ul id="026acb52-9020-4f1a-bfae-ef8bf7de2226" class="bulleted-list"><li style="list-style-type:disc">抽象方法使用对象组合，对象的创建被实现在工厂接口所暴露的方法中</li></ul><ul id="508aea8d-5043-43cb-96ba-cfcb19f58362" class="bulleted-list"><li style="list-style-type:disc">抽象工厂所创建的对象家族，而不需要依赖它们的具体类</li></ul><ul id="ea442376-2662-48d5-9257-5314fb851b63" class="bulleted-list"><li style="list-style-type:disc">依赖倒置原则，指导我们避免依赖具体类型，而要尽量依赖抽象</li></ul></blockquote><h3 id="7834a9ce-8476-4086-afa2-a0078de0a17b" class="">单件模式 P·177 - <code>Singletion Pattern</code></h3><blockquote id="87042c1e-2293-43f2-8417-14820c6c01da" class="block-color-blue_background"><em><strong>确保一个类只有一个实例，并提供一个全局访问点</strong></em><ul id="30e22d88-57d1-4542-90bc-f16b15ae7928" class="bulleted-list"><li style="list-style-type:disc">单件模式确保程序中一个类只有一个实例</li></ul><ul id="c694144b-b480-44ac-a130-c97e5e3b77a1" class="bulleted-list"><li style="list-style-type:disc">单件模式也提供访问这个实例的全局点</li></ul><ul id="61629429-295f-4447-afce-642f5b4acd89" class="bulleted-list"><li style="list-style-type:disc">在JAVA中实现单件模式，需要私有的构造器，一个静态变量和一个静态方法</li></ul><ul id="027d476d-46da-4afd-8f1c-2bfb380fc7e5" class="bulleted-list"><li style="list-style-type:disc">确定在性能和资源方面的限制，然后小心的选择适当的方案来实现单件模式，以解决多线程的问题</li></ul><ul id="15dd897a-7c56-4a56-a17e-68d7b9bec6ed" class="bulleted-list"><li style="list-style-type:disc">如果使用多个类加载器，可能导致单件失效而产生多个实例</li></ul></blockquote><h3 id="7c3e218f-2f2d-4b14-af76-eed15e5cfb8b" class="">命令模式 P·206 - <code>Command Pattern</code></h3><blockquote id="93ba38f2-865e-4822-a6c0-2f0e547a7a25" class="block-color-blue_background"><em><strong>将请求封装成对象，以便使用不同的请求、队列、或者日志来参数化其他对象。命令模式也支持可撤销的操作。</strong></em><ul id="08b9a677-153c-4316-a79f-d9cf6365a31c" class="bulleted-list"><li style="list-style-type:disc">在被解耦的两个对象之间是通过命令来沟通的，命令对象封装了接收者和一个动作或者一组动作。</li></ul><ul id="f39a8d8d-2325-43dc-b4eb-b59e88e69887" class="bulleted-list"><li style="list-style-type:disc">调用者通过调用命令对象的execute方法发起请求，这会使得接受者的动作被调用</li></ul><ul id="be5b4a14-9d51-4f49-b472-9e4f94867f05" class="bulleted-list"><li style="list-style-type:disc">命令模式支持撤销，做法是定义undo方法来回到execute被执行前的状态</li></ul><ul id="98585fdb-a6a4-4c11-b224-455e84b58c18" class="bulleted-list"><li style="list-style-type:disc">宏命令是命令的延伸，允许调用多个命令。宏命令也支持撤销操作</li></ul><ul id="bde857fd-8d1d-4977-9496-f3ed7815f9b4" class="bulleted-list"><li style="list-style-type:disc">实际操作时，很常见的使用“聪明”命令对象，也就是直接实现了请求，而不是将工作委托给接收者</li></ul><ul id="7b331508-eb3a-41cb-8f63-d5fb5a2fb9a7" class="bulleted-list"><li style="list-style-type:disc">命令也可以用来实现事务与日志系统</li></ul></blockquote><h3 id="d0636be3-f88c-487d-b22a-6325e8118ff0" class="">适配器模式 P·243 - <code>Adapter Pattern</code></h3><blockquote id="279fc7b8-eb16-4fdb-83d7-7214e7573701" class="block-color-blue_background"><em><strong>将一个类的接口，转换成客户期望的另一个接口，适配器让原本不兼容的类型可以合作无间</strong></em><ul id="39d3788c-487e-499b-b809-c80d19e414d0" class="bulleted-list"><li style="list-style-type:disc">当需要使用一个现有的类而其他接口并不符合你的需要时，就使用适配器</li></ul><ul id="f156ba56-3bd4-4082-af59-40f620076e1e" class="bulleted-list"><li style="list-style-type:disc">适配器改变接口以符合客户的期望</li></ul><ul id="f3a5e928-fcfa-41ba-bf21-04378f361970" class="bulleted-list"><li style="list-style-type:disc">实现一个适配器的复杂程度与目标接口的大小和复杂程度而定</li></ul><ul id="2074960b-8a1a-454a-a6c2-c3b3ee5f880d" class="bulleted-list"><li style="list-style-type:disc">适配器模式有两种形式：对象适配器与类适配器。类适配器需要用到多重继承</li></ul><ul id="30aec3c8-589f-4e9f-8bd1-2d0839a3d610" class="bulleted-list"><li style="list-style-type:disc">适配器将一个对象包装起来以改变其接口；装饰者讲一个对象包装起来以增加新的行为和责任，而改观将一群对象包装起来以简化其接口</li></ul></blockquote><h3 id="77843fb7-23e2-4ed7-ab11-1284e1ba612d" class="">外观模式 P·264 - <code>Facede Pattern</code></h3><blockquote id="de3ced4c-e8a5-490e-a70f-8d32eea17108" class="block-color-blue_background"><em><strong>提供了一个统一接口，用来访问子系统的一群接口。外观定义了一个高层接口，让子系统更容易使用。</strong></em><ul id="d23c5866-718c-4c27-b7ed-63cba937a6e5" class="bulleted-list"><li style="list-style-type:disc">当需要统一一个很大的接口或者一群复杂的接口对象时，使用外观</li></ul><ul id="4260528c-ce85-4727-a264-81d58c8e90f7" class="bulleted-list"><li style="list-style-type:disc">外观将客户从一个复杂的子系统中解耦</li></ul><ul id="63fefb79-b810-4d8d-9a86-a7a4487b387b" class="bulleted-list"><li style="list-style-type:disc">实现一个外观，需要将子系统组合进外观中，然后将工作委托给子系统执行</li></ul><ul id="2a57742d-644f-493a-be7c-f2e3ac69a72c" class="bulleted-list"><li style="list-style-type:disc">可以为子系统实现一个以上的外观</li></ul></blockquote><h3 id="e0b226ed-79fe-414e-8ac6-5659c3556c98" class="">模版方法模式 P·289 - <code>Temple Method Pattern</code></h3><blockquote id="20f2de52-6b66-4cb4-a7b0-465c2eefd5e3" class="block-color-blue_background"><em><strong>在一个方法中定义一个算法的骨架，而将算法的实现延迟到子类中。模版方法使得子类可以在不改变算法结构的情况下，重新定义算法中的某些步骤。</strong></em><ul id="218d7fb4-ae8d-4c17-a07d-2373b597a3d9" class="bulleted-list"><li style="list-style-type:disc">模版方法定义了算法的步骤，把这些步骤的实现推迟到子类</li></ul><ul id="0ceaf08b-5a59-435d-92cd-785ef807c4a7" class="bulleted-list"><li style="list-style-type:disc">模版方法为我们提供了一种代码复用的技巧</li></ul><ul id="7425b563-1444-470a-abf0-32e058cefa43" class="bulleted-list"><li style="list-style-type:disc">模版方法的抽象类可以定义具体方法，抽象方法和钩子</li></ul><ul id="9d923670-0076-4cc1-ac1b-8d03e240b81b" class="bulleted-list"><li style="list-style-type:disc">抽象方法由子类实现</li></ul><ul id="24f83892-5ce5-4140-93b3-1be1bde7f023" class="bulleted-list"><li style="list-style-type:disc">钩子是一种方法，它在抽象类中不做或者做默认的事情，子类可以选择是否覆盖它</li></ul><ul id="8c34bf4f-c916-47e2-a2a4-545054082c6a" class="bulleted-list"><li style="list-style-type:disc">为了防止子类改变模版方法中的算法，可以将模版方法声明为final</li></ul><ul id="8eafc7d5-e10b-4ee6-be7b-ae55459f6f0e" class="bulleted-list"><li style="list-style-type:disc">好莱坞原则告诉我们，将决策权放在高层模块中，以便决定如何与何时调用低层模块</li></ul><ul id="43eb3e69-511f-4e19-aade-9c647fc33c02" class="bulleted-list"><li style="list-style-type:disc">你将在真实世界中看到许多模版方法的变体</li></ul><ul id="79a85332-6409-468c-b83c-d03390735ea7" class="bulleted-list"><li style="list-style-type:disc">策略模式和模版方法模式都封装算法，一个用组合，一个用继承</li></ul><ul id="80d15e7e-cbd6-4f62-a677-7ad574decb7e" class="bulleted-list"><li style="list-style-type:disc">工厂方法是模版方法的特殊版本</li></ul></blockquote><h3 id="4158b41c-891e-4cef-987b-a85ca5330245" class="">迭代器模式 P·336 - <code>Itertor Pattern</code></h3><blockquote id="db8e3066-c74b-4536-8624-ae0177bfe932" class="block-color-blue_background"><em><strong>提供一个方法顺序访问一个聚合对象的各个元素，而又不暴露其内部的表示</strong></em><ul id="ef11bb71-e9fa-4b7f-8d03-00b019aa18a2" class="bulleted-list"><li style="list-style-type:disc">迭代器允许访问聚合的元素，而不需要暴露它的内部结构</li></ul><ul id="c99df405-c0b6-49ee-96e4-d59ba3fc7837" class="bulleted-list"><li style="list-style-type:disc">迭代器将遍历聚合的工作封装到一个对象中</li></ul><ul id="459ae97c-9747-4bd0-8660-f146a04bbc05" class="bulleted-list"><li style="list-style-type:disc">当使用迭代器时我们依赖聚合提供遍历</li></ul><ul id="9a4bce7a-f98a-456e-8c99-131c2e9ab971" class="bulleted-list"><li style="list-style-type:disc">迭代器提供了一个通用的接口，让我们遍历聚合的项，当我们编码使用聚合的项时，就可以使用多态机制</li></ul><ul id="3a1cebf6-f0ae-4607-91fb-9f93f93853d1" class="bulleted-list"><li style="list-style-type:disc">我们应该努力让一个类分配一个责任</li></ul></blockquote><h3 id="8cffd089-a60c-48fe-a220-8426077a7d6d" class="">组合模式 P·256 - Combining Pattern</h3><blockquote id="69a241aa-396b-4e96-abc4-65adbd7b13ba" class="block-color-blue_background"><em><strong>允许将对象组成树形结构来表现“整体/局部”的层次结构。组合能让客户以一致的方式处理个别对象和对象组合</strong></em><ul id="648106d5-47c2-42e7-a0ef-1badea0f9064" class="bulleted-list"><li style="list-style-type:disc">组合模式提供一个结构，可同时包含个别对象和对象组合</li></ul><ul id="157cb7fd-21e0-40d3-9228-05a5e2627a71" class="bulleted-list"><li style="list-style-type:disc">组合模式允许客户对个别对象以及组合对象一视同仁</li></ul><ul id="a0de7207-7564-42a5-aeca-94b06b6749c3" class="bulleted-list"><li style="list-style-type:disc">组合结构内的任意对象成为组件，组件可以是组合，也可以是叶节点</li></ul><ul id="580ce842-8314-4e8a-9fc4-a9f9600c9562" class="bulleted-list"><li style="list-style-type:disc">在实现组合模式时，有许多设计上的折衷。你要根据需要平衡透明性和安全性</li></ul></blockquote><h3 id="77170142-666d-4e18-b0df-6fe279bf7072" class="">状态模式 P·410 - <code>State Pattern</code></h3><blockquote id="63079c0e-e936-4485-9ea0-10d472fe3dfe" class="block-color-blue_background"><em><strong>允许对象在内部状态改变时改变它的行为，对象看起来好像修改了它的类。</strong></em><ul id="4d5f1c0a-68fa-4a39-b475-a085896a669a" class="bulleted-list"><li style="list-style-type:disc">状态模式允许一个对象基于内部状态而拥有不同的行为</li></ul><ul id="e38ad2e1-ec08-4cff-b880-a401d841b430" class="bulleted-list"><li style="list-style-type:disc">和程序状态机不同，状态模式用类来代表状态</li></ul><ul id="85beb932-ea6c-4cb7-9c9b-f21398a88d35" class="bulleted-list"><li style="list-style-type:disc">Context会将行为委托给当前状态对象</li></ul><ul id="f7319093-90a7-4d91-90c6-be3b280f4a76" class="bulleted-list"><li style="list-style-type:disc">通过将每个状态封装进一个类，我们把以后需要做的任何改变局部化了</li></ul><ul id="205ecc8c-53ff-4e31-9cf5-d0d76312eaa0" class="bulleted-list"><li style="list-style-type:disc">状态模式和策略模式有相同的类图，但是他们的意图不同</li></ul><ul id="f77e6948-f244-4003-9360-f7fa7b7260a0" class="bulleted-list"><li style="list-style-type:disc">策略模式通常会用行为或算法来配置Context类</li></ul><ul id="3bfaffbf-5fbc-497b-b0f6-a7543ef4d553" class="bulleted-list"><li style="list-style-type:disc">状态模式允许Context随着状态的改变而改变行为</li></ul><ul id="07da5d51-1b79-4813-9d2e-515cf0b26e75" class="bulleted-list"><li style="list-style-type:disc">状态转换可以由State类或Context类控制</li></ul><ul id="8d374341-aad7-4b49-88cb-98519829caac" class="bulleted-list"><li style="list-style-type:disc">使用状态模式通常会导致设计中类的数目大量增加</li></ul><ul id="41e0234f-71bd-4d5b-b94b-4ccce84a6768" class="bulleted-list"><li style="list-style-type:disc">状态类可以被多个Context实例共享</li></ul></blockquote><h3 id="e402ee44-16f1-423e-9d88-381fca97f73f" class="">代理模式 P·460 - <code>Proxy Pattern</code></h3><blockquote id="9d5cad83-0648-4722-b07f-91bfdf7498e7" class="block-color-blue_background"><em><strong>为另一个对象提供一个替身或占位符以控制对这个对象的访问。（远程代理，虚拟代理，保护代理……）</strong></em><ul id="5d48f036-6218-4b36-90f6-82a03e455940" class="bulleted-list"><li style="list-style-type:disc">代理模式为另一个对象提供代表，以便控制客户对对象的访问，管理访问的方式有多种</li></ul><ul id="59a7ffb2-0e5d-4d8f-94d5-b0b2d7388561" class="bulleted-list"><li style="list-style-type:disc">远程代理管理客户和远程对象之间的交互</li></ul><ul id="e3f3fc69-ea30-47ca-8ecc-a4e0977e0c68" class="bulleted-list"><li style="list-style-type:disc">虚拟代理控制访问实例化开销大的对象</li></ul><ul id="4da39b7e-c3a1-4fe3-b75c-ba03df8aa7a0" class="bulleted-list"><li style="list-style-type:disc">保护代理基于调用者控制对对象方法的访问</li></ul><ul id="43db808d-2fa2-47f6-976d-f7898d822267" class="bulleted-list"><li style="list-style-type:disc">代理模式有许多变体，例如：缓存代理、同步代理，防火墙代理</li></ul><ul id="39016213-4ee6-4dac-863d-6445cc87ee96" class="bulleted-list"><li style="list-style-type:disc">代理在结构上类似装饰者，但是目的不同</li></ul><ul id="0dfb0a2f-c255-4c7f-bbd4-a8bd6ed39c5f" class="bulleted-list"><li style="list-style-type:disc">装饰者模式为对象加上行为，而代理则是控制访问</li></ul><ul id="fd49e245-e7b2-4722-9f89-15aa1f5174cb" class="bulleted-list"><li style="list-style-type:disc">Java内置的代理支持，可以根据需要创建动态代理，并将所有调用分配到所选的处理器</li></ul><ul id="c8fc73d8-29d0-40c5-9e41-a06d98f55869" class="bulleted-list"><li style="list-style-type:disc">就和其他的包装者（wrapper）一样，代理会造成设计中类的增加</li></ul></blockquote><h3 id="f4af52fc-c8fa-4bbf-950e-1cf54c974215" class="">复合模式 P·560</h3><blockquote id="2cb84d3b-1625-480d-b80a-497f3a681150" class="block-color-blue_background"><em><strong>复合模式结合两个或以上的模式，组成一个解决方案，解决一再发生的一般性问题。</strong></em><ul id="78aee85b-a5a9-4ccd-a3a2-b05847625498" class="bulleted-list"><li style="list-style-type:disc">MVC是复合模式，结合了观察者模式、策略模式和组合模式</li></ul><ul id="14d4492a-6c62-4879-bf40-4daa3c9930b0" class="bulleted-list"><li style="list-style-type:disc">模型使用观察者模式，以便观察者更新，同时保持两者之间解耦</li></ul><ul id="e70208a8-040b-4839-abbf-373ae743fdb9" class="bulleted-list"><li style="list-style-type:disc">控制器是视图的策略，视图可以使用不同的控制器实现，得到不同的行为</li></ul><ul id="70818584-e520-4882-85b3-b04d5ac6f7e4" class="bulleted-list"><li style="list-style-type:disc">视图使用组合模式实现用户界面，用户界面通常组合了嵌套的组件，像面板、框架和按钮</li></ul><ul id="662034c9-d1a3-4f3b-9f70-f3216a8a2241" class="bulleted-list"><li style="list-style-type:disc">这些模式携手合作，把MVC模型的三层解耦，这样可以保持设计干净又有弹性</li></ul><ul id="fd4f4a45-93b0-4b66-9926-022b506691e0" class="bulleted-list"><li style="list-style-type:disc">适配器模式用来将新的模型适配成已有的视图和控制器</li></ul><ul id="41c4da9e-1b68-43df-a7ea-9412869483dd" class="bulleted-list"><li style="list-style-type:disc">Model 2是MVC在WEB上的应用</li></ul><ul id="e2a01388-014c-4907-b198-e249cde3b468" class="bulleted-list"><li style="list-style-type:disc">在Model 2中，控制器实现成Servlet，而JSP/HTML实现视图</li></ul></blockquote><h1 id="00663fdc-820a-422f-ac8b-9d5f2ecbfa4f" class="">OO设计原则</h1><blockquote id="3503d105-dc24-40dc-9404-8d1290c05eb4" class="block-color-gray_background"><strong>OO基础：抽象、封装、多态、继承</strong><ul id="fb3f9090-58d2-48dc-8562-86d4b80538dc" class="bulleted-list"><li style="list-style-type:disc"><strong>良好的OO设计必须具备可复用、可扩充、可维护三个特性。</strong></li></ul><ul id="be926b91-35a6-4437-a71e-e6dbaa0daaa5" class="bulleted-list"><li style="list-style-type:disc"><strong>模式可以让我们建造出具有良好OO设计质量的系统。</strong></li></ul><ul id="657ecd5a-9816-4994-bd0d-ed6ec05bd6e7" class="bulleted-list"><li style="list-style-type:disc"><strong>模式被认为是历经验证的OO设计经验。</strong></li></ul><ul id="fb91abc8-37e8-4013-92f6-446646f43a6d" class="bulleted-list"><li style="list-style-type:disc"><strong>模式不是代码，而是针对设计问题的通用解决方案。</strong></li></ul><ul id="c7c1ed70-fd14-45da-ba08-0300ae1230c6" class="bulleted-list"><li style="list-style-type:disc"><strong>模式不是被发明，而是被发现。</strong></li></ul><ul id="5a3ab1d7-5d8e-4d60-846c-4fc6f8d015f8" class="bulleted-list"><li style="list-style-type:disc"><strong>大多数的模式和原则，都着眼于软件变化的主题。</strong></li></ul><ul id="9a3113b4-9d83-4d8d-9e42-41b3de28be8d" class="bulleted-list"><li style="list-style-type:disc"><strong>大多数的模式都允许系统局部改变独立于其他部分。</strong></li></ul><ul id="08e49abf-89dc-466f-89c3-fe1e9f953c65" class="bulleted-list"><li style="list-style-type:disc"><strong>我们常把系统中会变化的部分抽出来封装。</strong></li></ul><ul id="05e98cbb-48eb-4a4a-8364-d11388cf6c15" class="bulleted-list"><li style="list-style-type:disc"><strong>模式让开发人员之间有共享的语言，最大化沟通的价值。</strong></li></ul></blockquote><hr id="0c7b3e78-57c1-4338-8af1-373acb8ce2e4"/><h2 id="17964051-c654-404d-bedc-892dc902a086" class="">封装变化 P·9 - <code>把问题归零</code></h2><blockquote id="cee98a37-a5b5-4f5f-b57b-a6729dcac19e" class="block-color-blue_background"><em><strong>找出应用中可能需要变化之处，把它们独立出来，不要和那些不需要变化的代码混合在一起。</strong></em><p id="5cdc2458-8d16-4399-aa82-bd47b7d556e6" class="">另一种思考方式：“把会变化的部分取出并封装起来，以便以后可以轻易地改动或扩充此部分，而不影响不需要变化的部分。”</p><p id="b6746f49-907a-45cb-a73d-7f29c4449113" class="">这样的概念很简单，几乎是每个设计模式背后的精神所在。所有的模式都提供了一套方法让“系统中的某部分改变不会影响其他部分”。</p></blockquote><hr id="2eb619f1-fe64-4dbe-a3ac-43d6d3ae1135"/><h2 id="b420124d-0deb-4442-83dd-afff8db85790" class="">针对接口编程 P·11 - <code>接口代表每个具体的行为</code></h2><blockquote id="befd8f6f-c43b-42f3-ac9e-b013d840cecb" class="block-color-blue_background"><em><strong>针对接口编程，而不是针对实现编程。</strong></em><p id="5ad85ead-2f9a-42e2-9232-3d54555613aa" class="">核心：利用接口代表每个具体的行为，利用组合内嵌到具体的类中。</p><p id="f13fae46-da35-4305-919f-c7b0913256e8" class="">这样的做法迥异于以往，以前的做法是：行为来自于超类的具体实现，或是继承某个街口并有子类自行实现而来，这两种做法都是依赖于“实现”，我们被实现绑的死死的，没办法更改行为。</p></blockquote><hr id="c2802ab5-f87d-4d66-a91e-d7fa1aca8c46"/><h2 id="d88358d8-f76a-465f-99d2-23ebdc88a4bc" class="">多用组合，少用继承 P·23 - <code>”有一个“可能比”是一个“更好</code></h2><blockquote id="1adfb634-a057-4075-91da-50c3ab897fe1" class="block-color-blue_background"><em><strong>多用组合，少用继承。</strong></em><p id="839be7a4-d698-4b35-b51c-fc3eae78bf5d" class="">使用组合建立系统具有很大的弹性，不仅可将算法族封装成类，更可以在”运行时改变行为“，只要组合的行为对象符合正确的接口标准。</p></blockquote><hr id="3054f2d9-ad75-48d4-90fa-d9f1e3234ae1"/><h2 id="e7b82772-6a27-4547-8373-d58f6ca0c89d" class="">松耦合 P·53 - <code>为了交互对象之间的松耦合设计而努力</code></h2><blockquote id="952d9a29-4680-4f55-a03b-c414cacf12bc" class="block-color-blue_background"><em><strong>为了交互对象之间的松耦合设计而努力。</strong></em><p id="a9051ff3-b743-496b-90a1-229361a97f52" class="">松耦合的设计之所以能让我们建立有弹性的OO系统，能够应对变化，是因为对象之间的互相依赖降到了最低。</p><p id="beaeda9b-6d92-41cb-98c7-a103b58f4e9d" class="">观察者提供了一种对象设计，让主题和观察者之间松耦合。</p></blockquote><hr id="9c156dee-51f6-42e0-84f8-6cf342228d43"/><h2 id="4c0218e8-bec1-4f51-bf29-c1156238d131" class="">对扩展开放，对修改关闭 P·86 -  <code>组合&amp;委托</code></h2><blockquote id="f7bd323e-799d-4d3d-8fb2-d715ea9f130e" class="block-color-blue_background"><em><strong>类应该对扩展开放，对修改关闭。</strong></em><p id="ad5a6820-626c-4c55-9c7d-eaf55b1f5167" class="">目标是允许类容易扩展，再不修改现有代码的情况下，就可搭配新的行为。这样的设计具有弹性可以应对改变，可以接受新的功能来应对改变的需求。</p></blockquote><hr id="e67d9b5e-a646-4178-a398-9d570dd2066f"/><h2 id="b496ac2f-bd39-4c35-989f-049e2e1b64a6" class="">依赖倒置 P·139 - <code>依赖于抽象</code></h2><blockquote id="f3c1add0-15f8-4f7c-a85b-33e531d8fdee" class="block-color-blue_background"><em><strong>要依赖抽象，不要依赖具体类。</strong></em><p id="60e9360b-eca4-4290-b821-1201f338cbca" class="">不能让高层组建依赖低层组建，而且不管高层还是低层，都要依赖于抽象。</p><ul id="2bb7d1ad-d5cd-4d90-94fe-687e66d9e2ad" class="bulleted-list"><li style="list-style-type:disc">变量不可以持有具体类的引用。</li></ul><ul id="8ca02625-0099-4b1a-bb23-fc8ab657a904" class="bulleted-list"><li style="list-style-type:disc">不要让类派生自具体类。</li></ul><ul id="42a85f58-028f-48ea-8c79-c8582a31d485" class="bulleted-list"><li style="list-style-type:disc">不要覆盖基类中已实现的方法。</li></ul></blockquote><hr id="6e2fca27-7286-4c1a-b0eb-ef7bacfe09ac"/><h2 id="4ed47829-e8eb-4d3f-a643-bb140f0ad867" class="">“最少知识” P·265 - <code>减少依赖</code></h2><blockquote id="de1aef82-1345-4169-b6b3-c88e40e6452c" class="block-color-blue_background"><em><strong>最少知识原则：只和你的密友交谈</strong></em><p id="0dabb459-bee4-4a80-a363-778b37e6c576" class="">不要让太多的类耦合在一起，面的修改系统中一部分，会影响到其他部分。</p><p id="8a98b654-63ca-4fcc-8115-ce70c893ad7a" class="">如果许多累之间互相依赖，那么这个系统就会变成一个易碎的系统，它需要花许多成本维护，也会因为太复杂而不容易被其他人理解。</p><p id="a4930331-b379-40fd-a8b1-fceae66b9683" class="">就任何对象而言，在该对象的方法内，我们只应该调用属于以下范围的方法：</p><ul id="259ddc86-1248-4b85-ac5a-cd48db4cd11b" class="bulleted-list"><li style="list-style-type:disc">该对象本身</li></ul><ul id="ef18b8d0-0bed-4cfa-8e14-a5ddaeb8c5e2" class="bulleted-list"><li style="list-style-type:disc">被当作方法的参数而传递进来的对象</li></ul><ul id="66d19308-a94c-470c-ac80-ffed26b0bcc5" class="bulleted-list"><li style="list-style-type:disc">此方法所创建或实例化的任何对象</li></ul><ul id="5e1e9179-96db-4fc8-ae0f-512b92ba1b11" class="bulleted-list"><li style="list-style-type:disc">对象的任何组件</li></ul></blockquote><hr id="8dbcc6cd-8b0d-40b6-98b2-33d7971b4132"/><h2 id="bb5c4e27-d433-480b-8260-9416616c457e" class="">好莱坞原则 P·296 - <code>DI协作</code></h2><blockquote id="0fe8914b-d363-484c-a836-ab4d24e6fa1c" class="block-color-blue_background"><em><strong>别调用我们，我们会调用你们。</strong></em><p id="7da481b2-c736-4ca8-83b1-cbada533cbcb" class="">防止“依赖腐败”，高层低层互相依赖。</p><p id="55530ae9-ca9c-463c-a473-0bc9d3784646" class="">在好莱坞原则之下，我们允许低层组件将自己挂钩到系统上，但是高层组件会决定什么时候和怎样使用这些低层组件。</p></blockquote><hr id="0a81d484-5f85-4820-932c-6f5904c2575e"/><h2 id="2ddffe7d-bc70-401d-bfee-4e742bda182f" class="">单一职责 P·339 - <code>高内聚</code></h2><blockquote id="f426fbf0-b526-4c90-b73c-11de4f2eff5e" class="block-color-blue_background"><strong>一个类应该只有一个引起变化的原因。</strong><p id="876ac41b-b42f-4417-9f3e-c0a902689bbb" class="">类的每个责任都有改变的潜在区域。超过一个责任，意味着超过一个改变的区域。</p><p id="5a2aedab-9682-4c6e-b75a-ab1614575e46" class="">尽量让每个类保持单一责任。</p><p id="d66fe21a-c157-44c3-aa93-32b7fe2e0e5d" class="">当一个模块或一个类被设计成只支持一组相关的功能时，就是高内聚。</p></blockquote><hr id="3403d691-e2ff-4e99-8120-e14ec7868199"/><h1 id="869b8db1-67b0-44b5-a7be-02c42b433528" class="">问题思考</h1><blockquote id="8ddff58a-bfe5-40c1-84c9-52d75db3f59e" class="block-color-gray_background"><strong>有关于设计模式的问题思考，加深设计模式的理解。</strong></blockquote><hr id="59e204ea-8103-485d-a591-9a5c0f61b2fc"/><h3 id="425d9026-f065-4f4d-a99c-98892e8c87d9" class=""><strong>如果设计模式这么棒，为何没有人建立相关的库？P·29</strong></h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="5a3ed755-64c2-45ea-8672-9cf29ed0fe7b"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">设计模式比库的等级更高。设计模式告诉我们如何组织类和对象以解决某种问题。而且采纳这些设计并使它们适合我们特定的应用。</div></figure><hr id="5b1671fc-fd70-4ecc-88b2-45df2bc5934f"/><h3 id="febc18de-47ed-4c7e-8f40-866e5293bb7e" class=""><strong>库和框架不也是设计模式吗？P·29</strong></h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="17167139-8aa6-4cd4-a4f8-ab1e752e413a"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">库和框架提供了我们某种特定的实现， 让我们的代码可以轻易的引用，但是这并不算是设计模式。有时候，库和框架本身会用到某些设计模式。</div></figure><hr id="f1d45f26-34eb-4175-8a71-82cc42eb6b5e"/><h3 id="20b646ee-fc42-44c4-94b6-f1787d9f6a10" class="">有<strong>没有所谓设计模式的库？P·29</strong></h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="780a0b45-0a72-4e87-841f-078cf2503702"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">观察者，RMI，反射，动态代理。</div></figure><hr id="fab6b667-b72e-444e-ac14-2442a66510a2"/><h3 id="9c9a3644-e677-4814-9015-4111735c0c62" class="">【】<strong>观察者模式的实现细节相关问题 P·59</strong></h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="0596b6c5-de9b-4e67-bd19-472271021943"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><strong>update()是最适合调用Display()的地方吗？</strong><p id="6634eda2-c030-4497-bfef-c7336e0ab2e0" class=""><strong>为什么观察者要保存主题的引用？</strong></p><p id="4cf33af9-a1a5-466c-a7d2-dc961ab403c6" class="">取消注册时会比较方便。</p></div></figure><hr id="9062eb9d-b933-4dd7-a2cd-ca9ace3b4552"/><h3 id="6f10eaff-dcc9-4c44-9caf-04da3c0c1613" class="">对扩展开放，对修改关闭？设计如何兼顾？P·87</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="1f0a7cdb-a1be-4ade-b068-bd5bdf56f91d"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">比如一些聪明的OO技巧，利用组合和委托来实现。<p id="d6950da1-182a-4d97-80cf-4198cbabbbac" class="">观察者，策略等等。</p></div></figure><hr id="bad2fd91-10fa-4215-9e61-a1e863561e5b"/><h3 id="0eb64701-bfc1-4fcc-961e-937ce3f31abf" class="">如何将某件东西设计成可以扩展，又禁止修改？P·87</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="05f8d20f-4433-4a1b-ad6d-a50c551c6f55"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">比如一些聪明的OO技巧，利用组合和委托来实现。<p id="64e74906-67f6-42ee-8bc2-ed0b2092c21e" class="">装饰者模式完全遵循开闭原则。</p></div></figure><hr id="1f433956-53d3-4cfe-9c94-ebbf7aee3a8f"/><h3 id="1a31ac4b-6a4c-479b-9305-da474b599853" class="">如何让设计的每部分遵循开闭原则？P·87</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="a084bd4c-8aef-4757-acaa-7c4563d5add6"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">做不到，更有可能是设计浪费。<p id="85b08381-5e4a-4b88-8efd-f854459af71b" class="">在大的架构上遵循开闭原则，细节实现上需要视具体情况做取舍。</p></div></figure><hr id="a3f6889c-1cf5-4804-8cdc-b5da1f2f995f"/><h3 id="1f22538d-82a7-42e9-bc41-66ab1b38c832" class="">【】装饰者的实现细节相关问题 P·99</h3><hr id="223593e3-a3f5-4962-ad73-6aa225f1bdcb"/><h3 id="12d51d56-05dc-4921-93c4-c9e12001a0a3" class="">【】简单工厂方法的思考 P·115</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="8bb30f1d-ac2b-4e10-a0c6-780ce7d687dc"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><strong>这样做有什么好处？似乎只是把问题搬到另一个对象？</strong><p id="4cb00e17-594d-4317-9f74-6ffe778bd04d" class=""><strong>静态简单工厂的实现？</strong></p></div></figure><hr id="e763052a-4c7b-4143-ae89-be266aa84010"/><h3 id="dd401cc8-035d-4bca-8710-13fbc87f8c57" class="">【】工厂模式的细节相关问题 P·35</h3><hr id="4dab6a54-417e-4ccc-a16a-1cdebf482e0b"/><h3 id="62ba031b-aa5a-407e-940f-d3e41f94784a" class="">工厂方法和创建者是否总是抽象的？P·35</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="bda98a03-ce28-48a5-80f4-6f40e7c92c7b"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">不，可以定义一个磨人的工厂方法来产生某些具体的产品，这么一来即使创建者没有任何子嘞，依然可以创建产品。</div></figure><hr id="25ef82d9-9b7c-407f-a120-f141b8f2377e"/><h3 id="3a641e26-c697-4a16-a6d5-d9b986e4bf98" class="">简单工厂和工厂方法之间的差异？P·35</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="35375d5b-3598-4a16-9d47-ea78f275a1f8"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">简单工厂把全部的事情，在一个地方都处理完了；工厂方法是在创建一个框架，让子类决定如何实现。</div></figure><hr id="383d5a76-a564-423b-bf14-5a12dec45749"/><h3 id="c59b102d-d20c-49c8-99a1-5043c957ddf5" class="">工厂方法是不是潜伏在抽象工厂里面？P·158</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="5346ad5e-f6fa-49ae-bb00-423adb25b9bd"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">抽象工厂的方法常以工厂方法的方式实现。抽象工厂的任务是定义一个负责创建一组产品的接口。这个借口内的每个方法都负责创建一个具体产品。</div></figure><hr id="4fff495a-9177-4e11-ad2f-be666aec1ebb"/><h3 id="d1251eaa-4bb5-4bf2-bf92-78afc9524b7b" class="">【】单件的细节相关问题 P·184</h3><hr id="e7ea23bd-df94-4b27-a8e2-73658366bf6d"/><h3 id="de6a7c08-0030-4161-8627-4d7412375039" class="">命令模式接收者一定有必要存在吗？为何命令对象不直接实现execute细节？P·227</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="2e76545a-0eda-475d-92ec-4c718a8f4f13"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">一般来说，我们尽量设计“傻瓜”命令对象，他只懂得调用一个接收者的一个行为。然而有许多“聪明”命令对象会实现许多逻辑，直接完成一个请求。“聪明”的命令对象调用者和接收者的解耦程度比不上“傻瓜”命令对象</div></figure><hr id="2c31a435-f386-4add-8b12-a5c00c084bd9"/><h3 id="b4fd4253-c186-48e3-b704-af9e956d62d4" class="">命令模式如何实现多层次的撤销操作？P·227</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="93bffb83-eaa2-4159-82e9-be67eac42b1f"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">使用堆栈记录过程中每个命令。</div></figure><hr id="f59a7942-6afa-4059-834f-7226070b67c6"/><h3 id="29e60c74-e1d4-4d4a-8021-aff61fdc9db3" class="">命令模式宏命令实现（Party Mode）？P·227</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="d2f5436d-1ff6-4d00-9d98-0147bd5df25f"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">多重命令集成至宏命令的执行集合，然后使用循环执行。</div></figure><hr id="f81a05df-7a8d-40f4-91d6-db013b5c1008"/><h3 id="164cd5dc-93ea-4dd6-a2da-9a327f402619" class="">一个适配器需要做多少“适配”的工作？如果我需要实现一个很大的目标接口，似乎有“很多”工作要做。P·242</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="1d7192cf-84a6-4ee7-94ba-a8d202f80d29"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">实现一个适配器所需要进行的工作，的确和目标接口的大小成正比。<p id="f16da337-902d-4757-9f42-230fb6b50b05" class="">但是如果不这么做，就必须改写客户端代码来调用，将会花更大的力气，且违反OO原则。</p></div></figure><hr id="65e0f4df-26a9-479f-aea0-af29fe696aff"/><h3 id="5a163ebc-92d1-434f-817e-72dd985cb263" class="">一个适配器只能够封装一个类吗？P·260</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="8279d5e7-5fc8-4840-b7ff-fb55b1328024"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">适配器模式的工作是将一个接口转换成另一个。<p id="0417cb43-9fc8-4fa9-ad67-4670d77dc629" class="">封装多个雷需要用到外观模式</p></div></figure><hr id="8524ae9d-15da-4224-86a4-4daced18d285"/><h3 id="57dfe5c5-fb68-4911-9187-6844d3975a53" class="">如果外观封装了子系统的类，那么需要低层功能的客户如何接触？P·260</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="2cd613c4-a920-4a11-8363-dda47c527418"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">外观没有“封装”子系统的类，外观只提供简化接口。<p id="cffe507b-bf91-40ba-91b9-4835b796f4e8" class="">提供简化接口的同时，依然将系统的完全功能暴露出来，以供不时之需。</p></div></figure><hr id="66322297-8250-4693-b587-e9038f70dfd2"/><h3 id="3ad62f60-fae0-46e1-afc6-76a436b735ab" class="">外观会新增功能吗，或者它只是将每一个请求转由子系统执行？P·260</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="fa930ef2-d65a-4f9a-b092-9e5189a9b40a"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">可以附加“聪明”功能，比如条件，顺序。</div></figure><hr id="a9291ba3-1d87-4de9-bcfe-152e451312e5"/><h3 id="471ef86d-cf45-4d25-9ec3-3c0415e60752" class="">每个子系统只能有一个外观吗？P·260</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="525b976a-913c-489f-b63e-a05d9c2fd104"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">外观模式不限制数量。</div></figure><hr id="0b4edc13-a59d-40ab-9d72-f641a9c3fccf"/><h3 id="3ac178aa-bbc1-4cd5-9995-59a46c877cc9" class="">除了提供一个简单的接口，外观模式还有其他优点吗？P·260</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="bf479a01-31aa-4d22-ba3d-1beec42529c9"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">外观不只是简化了接口，也将客户从组件的子系统中解耦。</div></figure><hr id="0f79b4ef-6e56-46f8-915e-bd2c68a48ae5"/><h3 id="2b776ee4-edb3-4ae2-a84f-27d41ea70525" class="">适配器与外观包装的区别？P·260</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="2b706fca-ba3f-47ba-9ef2-fa7cda094eaa"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">适配器的意图在于转换，外观的意图在于简化。</div></figure><hr id="80cf1fb8-242d-46de-bbbe-15ca07382589"/><h3 id="e9818102-7325-4c05-b4cf-3cdc64b1d8dd" class="">最少知识原则和Law of Demeter<strong>得墨忒耳定律？P·267</strong></h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="895d6e17-7d98-47ab-af41-17536e439f3f"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">同一个原则。<p id="69313a2a-34be-43f3-a01d-6399f6e99434" class="">倾向于原则而不是法则，所有的设计都不免折衷。</p></div></figure><hr id="c7248622-f539-41df-bd47-6ddfcde67bfe"/><h3 id="7b501d5f-d6f6-48aa-a418-776493938115" class="">采用最少知识原则有什么缺点？<strong>P·267</strong></h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="0f3dff4c-5015-453a-92a1-843c505fe300"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">导致更多的包装类制作出来，以处理和其他组件的沟通，这可能会导致复杂度和开发时间的增加，降低运行时性能。</div></figure><hr id="5e038f03-97d4-4f4d-9fca-213eea31911c"/><h3 id="9820cef9-291f-4310-bb39-544225d66420" class="">当我创建一个模版方法时，怎么才能知道什么时候使用抽象方法，什么时候使用钩子呢？P·295</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="93b8638b-9108-4853-bb0c-ba0f6d0a1781"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">当子类“必须”提供算法中某个方法或步骤的实现时，就是用抽象方法。如果算法的这个部分是可选的，就用钩子。</div></figure><hr id="a60b6329-60ed-43c3-93f0-f752f7c2c00f"/><h3 id="e0c303d4-9f86-4b67-a646-30ae5e194820" class="">模版方法使用钩子真正的目的是什么？P·295</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="72c019a0-7277-497e-b06c-e571a4696c5a"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"> 1.   钩子可以让子类实现算法中可选的部分。<ol type="1" id="41051c8f-85e1-4e98-bb5e-b305706ec6a9" class="numbered-list" start="2"><li>可以让子类决定钩子方法后续的判断执行逻辑。</li></ol></div></figure><hr id="1e6c1f95-2d15-412e-b244-662bf8dfdd93"/><h3 id="70e06d39-1b09-4db9-94f2-750bf0c9436f" class="">似乎应该保持抽象方法的数目越少越好？P·295</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="6bae3ca5-07d2-45b6-9cab-bae6b0edbd6e"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">视具体情况而定，少了弹性降低，多了复杂性升高。</div></figure><hr id="107c518d-beb6-496a-8e3b-0099f6a3c2ca"/><h3 id="4b74afc7-a86a-461e-9bb7-f82933ce7c4b" class="">好莱坞原则和依赖导致原则之间的关系？P·298</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="745a82ab-b4bf-4c79-a33a-5a7b73deb1a1"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">依赖倒置原则教我们尽量避免使用具体类，而多使用抽象。<p id="28335570-0b79-47eb-8ca1-9b45c7dc3305" class="">而好莱坞原则是在创建框架或组件上的一个技巧，好让低层组件能够挂钩进计算中，而且又不会让高层组件依赖低层组件。</p><p id="92964440-1676-4c1a-81ee-c70cd59d4523" class="">两者的目标都是解耦，DI更加注重在设计中避免依赖。</p><p id="3272b651-f128-4d0c-ad6c-5103b5b37bb1" class="">好莱坞创建一个有弹性的设计，允许低层结构能够互相操作，又防止其他类太过依赖它们。</p></div></figure><hr id="4a5fb4e3-6950-426c-a74b-987bd7ff22f3"/><h3 id="b5934b63-2c53-47b5-a10b-64f0a1f580b2" class="">低层组件不可以调用高层组件的方法吗？P·298</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="f1f93832-d0d2-458f-8dc0-8e45a1566c43"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">并不尽然。事实上，低层组件在结束时，常常会调用超类的方法。<p id="ec4c74a4-86c7-4c38-8e69-9e0ed74ae030" class="">我们所要做的是避免和高层组件产生环状依赖。</p></div></figure><hr id="5bf0cb42-e517-439b-9af7-c8621a5debe9"/><h3 id="5f226be5-4e26-4148-971a-14b012645331" class="">【】模版方法模式的细节相关问题 P·305</h3><hr id="367b2465-815e-46ba-a789-28bd9b50fe65"/><h3 id="f6d112ee-ba78-4702-aa1c-6bf915c1a469" class="">【】迭代器模式的细节相关问题 P·332 P·338</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="1186f3bb-3e92-4d16-9329-c852094aa5c8"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><strong>如果我不想让客户具备删除的功能，怎么办？</strong><p id="383c163f-6bb4-4046-94ef-89ec375bdab6" class=""><strong>多线程的情况，Remove造成的影响？</strong></p><p id="76ca1908-c06b-4110-9ca1-38aa3ef46dbb" class=""><strong>迭代器实现向前，向后移动？</strong></p><p id="133f657b-2466-4557-85b2-85f7084a6d6d" class=""><strong>内部、外部迭代器的区别？</strong></p></div></figure><hr id="12610ce6-6c49-457d-bbb8-74dac3bdb6a1"/><h3 id="3df35317-00f9-4069-981c-99701deef30c" class="">组件、组合、树？P·358</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="58439359-ce2c-45e8-8db9-d3ee734f1d8a"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">组合包含组件。组件有两种：组合和叶节点元素。最终得到的是一个树状结构。</div></figure><hr id="37e7788c-22cf-4f15-9645-f0c3fb8f94d6"/><h3 id="581977d9-093d-40e0-8f2d-5780cec55ffc" class="">组合模式与迭代器？P·358</h3><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="0f048086-2fee-4020-b127-61dfa2622d34"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">经常一起合作。使用组合可以更好的使用迭代器。</div></figure><hr id="ac3b9fce-26d8-4309-9f11-7556038e1aca"/><h3 id="e52f33f0-b437-46c9-ac75-ed717b913083" class="">状态模式的实现细节相关问题 P·412</h3><hr id="ff438287-d60e-4244-aa2e-e82b355c8699"/><h3 id="7dc9d42a-9202-4f1f-a382-eb52065b869d" class="">代理模式的实现细节相关问题 P·471</h3><hr id="ce94cad9-fc4f-4259-ad93-1d82c2e43a18"/><h3 id="6238bc52-82b3-438f-becd-f517de75812a" class="">JDK“动态代理”的相关问题 P·486</h3><hr id="ef46c719-8144-4627-a7b7-2136af211ab1"/><h3 id="fa440c77-30f2-4aa0-b053-566c96bfb650" class=""></h3><hr id="5ffa5e0b-3ff8-45ba-9367-aa6b5b1e4bc0"/><h1 id="3662bd02-a4af-41bb-9773-96c194a03aea" class="">围炉夜话 &amp; 模式访谈</h1><blockquote id="a802b7dc-4aad-40ec-ad14-e7fb232fbcb0" class="block-color-gray_background"><strong>各主题之间的拟人化探讨。</strong></blockquote><hr id="75b08cb3-b2e4-49a2-918c-345ae2a1c74e"/><h3 id="836a8ab7-3bd7-48ea-a976-7f470e58b414" class="">主题和观察者就使观者者获得状态信息的正确方法发生了争吵 P·62</h3><blockquote id="65d9941d-0c1a-46e1-b13d-713fdd0f2b78" class="block-color-blue_background">消息的推与拉模式。</blockquote><hr id="1f37a5c5-6161-43e2-b676-2804fde65e2a"/><h3 id="c8fbb7e6-04c0-45a8-95dc-033a41f83952" class=""> 装饰者的告白 P·104</h3><blockquote id="416b8f40-a7c9-4ec7-a009-043f67e4e3d9" class="block-color-teal_background">装饰者的黑暗面：<ul id="3b349c1f-1c92-4d0e-89b5-d9aa28f04f3c" class="bulleted-list"><li style="list-style-type:disc">类膨胀，在设计中加入了大量的小类。</li></ul><ul id="800155f4-9992-4e64-bee3-c36e5250460e" class="bulleted-list"><li style="list-style-type:disc">类型问题，客户端特殊类型可能会出问题。</li></ul><ul id="9913ff3e-6bde-4c85-a5f2-903c35892ff9" class="bulleted-list"><li style="list-style-type:disc">增加代码的复杂度。</li></ul></blockquote><hr id="00b83642-08b2-482a-8602-c4432fca92b8"/><h3 id="6efc4b32-6841-4643-9f00-e4869dfd4992" class="">工厂方法和抽象工厂 P·158</h3><blockquote id="fe8bec08-34cf-46cb-9dec-d68660b7bf14" class="block-color-teal_background">工厂方法将创建对象延迟到子类进行，将客户从具体类型解耦。<p id="975c48da-8e1b-4be3-ae4a-490d08a76ce6" class="">抽象工厂是需要一个大的接口来定义产品族的实现，将一群相关的产品集合起来，具体单产品的实现可看作为工厂方法。</p></blockquote><hr id="1cf6e7c9-5398-4d4b-b2e5-2a7ebfca7dde"/><h3 id="15e9485d-c5ae-49c8-afd5-590e77b41d61" class="">单件的告白 P·174</h3><blockquote id="bc145284-8e80-4310-848b-1155a08da560" class="block-color-teal_background">独一无二，管理共享的资源，没有公开的构造器，通过静态方法getInstance()。</blockquote><hr id="5615e1aa-5784-4f95-a958-5bbcc08a84ff"/><h3 id="d13b2fa2-ee60-4fcd-81fd-7c8f86aa0636" class="">对象适配器和类适配器的面对面接触 P·247</h3><blockquote id="cb98ae17-01a4-4497-8371-5649fcd6b437" class="block-color-blue_background">对象适配器使用组合，但需要实现目标接口的方法。<p id="2de9b0c7-cff9-414a-ad4f-cefe82072f8b" class="">类适配器使用继承，有默认方法，也可以重写。</p></blockquote><hr id="edb4937f-d923-4a7e-989c-481f8ecbe96f"/><h3 id="869aa7a0-ac1d-4785-9330-b9177a56ef8d" class="">装饰者模式和适配器模式讨论彼此的差异 P·252</h3><blockquote id="f6bed653-aad5-4ca8-98ef-8595f796fc46" class="block-color-blue_background">都是用来包装对象的。<p id="e0d6cddc-e28d-4bf5-9557-fa0181729c0c" class="">装饰者的意图是方便扩展加入新的行为。</p><p id="99dea4a5-b0e7-4466-bffe-59d78b69dc56" class="">适配器的意图是转换接口以匹配客户端的调用。</p></blockquote><hr id="130f4f00-c886-451a-8408-b6d4dc61d64f"/><h3 id="06165ddd-00d5-46d5-bfd1-c21304793a9d" class="">模版方法和策略的比较 P·308</h3><blockquote id="a32339a1-4d44-4882-b47c-5eae2d2eef5b" class="block-color-blue_background">模版方法意图提供统一的算法，将变化部分委托给子类实现。<p id="f3ad7e54-1f1c-4c88-82e8-8b160761eede" class="">策略模式利用组合来实现可变的行为。</p></blockquote><hr id="811d6db1-f3e4-45b8-8903-8ee26da90ec0"/><h3 id="6d03720a-f80b-4b7e-81c1-1629567f541c" class="">组合模式，我们要讨论他在实现上的问题 P·376</h3><blockquote id="a3686a5c-f902-4459-b10d-c7d1b0b11bc3" class="block-color-teal_background">数个集合有“整体/部分”的关系，用一致性的方案对待。<p id="da4402c4-f080-47dc-9592-24ebc975ea34" class="">为了保证透明性，组合内对象需要实现共同接口。</p><p id="a61a2124-02be-4cca-a868-47fa152db5d8" class="">安全版本的组合可以在处理时候检查对象的类型，在进行方法调用。</p><p id="2535a5c1-2945-4c50-8be7-8f0773653708" class="">遍历的成本如果很高，可以考虑用缓存。</p></blockquote><hr id="386277be-98dc-4f6a-8e22-8802a5a10331"/><h3 id="a0e6716d-12af-4143-bc8c-c343df552196" class="">策略模式与状态模式重聚 P·418</h3><blockquote id="9a92fc7a-a684-44ae-91e1-f5f703db4eab" class="block-color-blue_background">策略使用组合和委托来定义具体的行为。<p id="7bb12029-13f5-484a-974c-db9ddfcf99db" class="">状态使用多种状态来将行为进行改变。</p></blockquote><hr id="f091f7fa-fa1c-4297-9515-e683de4ec069"/><h3 id="7dc065b4-0b98-4a13-bb99-e4f22ad9cf39" class="">代理和装饰者的意图 P·472</h3><blockquote id="94d03e97-c4aa-4951-8a61-00d9ef098dd6" class="block-color-blue_background">代理是保护对象避免不必要的访问兼为对象加上额外的动作。<p id="1ccc7e6e-3307-47e6-8bff-e3bcf215dc1a" class="">装饰者是包装对象为对象加上额外的行为。</p></blockquote><hr id="efc71861-cb84-4a4c-8770-c5b33fa8129d"/><h1 id="f8126c00-e301-4ce0-9268-d719cba7f6e0" class="">大师与门徒</h1><blockquote id="66d6fbb6-2010-4088-a218-6f2662a8bef5" class="block-color-gray_background"><strong>运用设计模式的深层次思考。</strong></blockquote><hr id="2b4175ec-056d-4f2b-9aff-cbe1f65e5536"/><h3 id="fc09c1fd-b897-4cb9-814b-1ef5cd4a5093" class="">利用组合和委托在运行时具有继承行为的效果 P·85</h3><blockquote id="7143f4aa-3a88-4f01-b6ac-8cc1c7ffaf85" class="block-color-blue_background">利用继承设计子类的行为，是在编译时静态决定的（<code><strong>JVM静态多分配</strong></code>）而且所有的子类都会继承到相同的行为。然而，利用组合和委托扩展对象的行为，可以在运行动态的进行扩展（<code><strong>动态单分配</strong></code>）。<p id="b2d6a1a4-244e-4e4d-9314-db35e8319b79" class="">利用此技巧把多个新职责，甚至是设计超类时还没有想到的职责加在对象上，动态地组合对象，写新的代码实现新的功能。</p></blockquote><p id="2b29a715-d657-4672-bf5f-774917580591" class="">
+</p><hr id="618c4658-53b8-4ffb-9c80-98b1ace63436"/><h3 id="6420a882-f058-418f-9f93-f0b1123ac840" class="">封装变化对抽象编码（工厂） P·136</h3><blockquote id="832d9652-3a5d-4bd3-804d-b6e9e7441126" class="block-color-blue_background">封装创建对象的代码，就可以对抽象编码，将客户代码和真实的实现解耦。<p id="6b968cda-fbb8-4841-ae16-1d3852b980f2" class="">将这些创建对象的代码用栅栏围起来，可以保护这些创建对象的代码。</p></blockquote><hr id="bd37f211-d747-4507-959e-01bddb31a73b"/></div></article></body></html>
